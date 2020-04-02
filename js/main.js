@@ -2,6 +2,10 @@
 var canvas;
 var engine;
 var scene;
+var isWPressed = false;
+var isSPressed = false;
+var isAPressed = false;
+var isEPressed = false;
 document.addEventListener("DOMContentLoaded", startGame);
 
 function startGame() {
@@ -11,15 +15,8 @@ function startGame() {
     modifySettings();
     var tank = scene.getMeshByName("HeroTank");
     var toRender = function () {
-        var yMovement = 0;
-        console.log(tank.position.y);
-        if (tank.position.y > 2)
-        {
-            //console.log("well i am bigger than 2");
-            yMovement = -2;
-        }
-        //tank.position.z -= 1; // this movement does not respect collisions
-        tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement,5));
+        tank.move();
+
         scene.render();
     }
     engine.runRenderLoop(toRender);
@@ -91,8 +88,29 @@ function createTank(scene)
     tankMaterial.diffuseColor = new BABYLON.Color3.Red;
     tankMaterial.emissiveColor = new BABYLON.Color3.Blue;
     tank.material = tankMaterial;
-
     tank.position.y += 2;
+    tank.speed = 1;
+//    tank.frontVector = new BABYLON.Vector3(0, 0, 1);
+    tank.move = function()
+    {
+        var yMovement = 0;
+        if (tank.position.y > 2) {
+            yMovement = -2;
+        }
+        if (isWPressed) {
+            tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement, 1 * tank.speed));
+        }
+        if (isSPressed) {
+            tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement, -1 * tank.speed));
+        }
+        if (isAPressed) {
+            tank.moveWithCollisions(new BABYLON.Vector3(-1 * tank.speed,yMovement, 0));
+        }
+        if (isEPressed) {
+            tank.moveWithCollisions(new BABYLON.Vector3(1 * tank.speed, yMovement,0));
+        }
+        
+    }
     return tank;
 }
 
@@ -135,3 +153,44 @@ function modifySettings() {
     }
 
 }
+
+
+document.addEventListener("keydown", function(event)
+{
+    if(event.key == 'w' || event.key == 'W')
+    {
+        isWPressed = true;
+    }
+    if(event.key == 's' || event.key == 'S')
+    {
+        isSPressed = true;
+    }
+    if(event.key == 'a' || event.key == 'A')
+    {
+        isAPressed = true;
+    }
+    if(event.key == 'e' || event.key == 'E')
+    {
+        isEPressed = true;
+    }
+});
+
+document.addEventListener("keyup", function(event)
+{
+    if(event.key == 'w' || event.key == 'W')
+    {
+        isWPressed = false;
+    }
+    if(event.key == 's' || event.key == 'S')
+    {
+        isSPressed = false;
+    }
+    if(event.key == 'a' || event.key == 'A')
+    {
+        isAPressed = false;
+    }
+    if(event.key == 'e' || event.key == 'E')
+    {
+        isEPressed = false;
+    }
+})
