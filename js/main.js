@@ -8,6 +8,7 @@ function startGame() {
     canvas = document.getElementById("renderCanvas");
     engine = new BABYLON.Engine(canvas, true);
     scene = createScene();
+    modifySettings();
     var toRender = function () {
         scene.render();
     }
@@ -61,4 +62,11 @@ window.addEventListener("resize", function () {
     engine.resize();
 });
 
+function modifySettings() {
 
+    scene.onPointerDown = function()
+    {
+        canvas.requestPointerLock();
+    }
+
+}
