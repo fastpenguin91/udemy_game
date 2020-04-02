@@ -9,7 +9,17 @@ function startGame() {
     engine = new BABYLON.Engine(canvas, true);
     scene = createScene();
     modifySettings();
+    var tank = scene.getMeshByName("HeroTank");
     var toRender = function () {
+        var yMovement = 0;
+        console.log(tank.position.y);
+        if (tank.position.y > 2)
+        {
+            //console.log("well i am bigger than 2");
+            yMovement = -2;
+        }
+        //tank.position.z -= 1; // this movement does not respect collisions
+        tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement,5));
         scene.render();
     }
     engine.runRenderLoop(toRender);
@@ -18,10 +28,11 @@ function startGame() {
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
     var ground = CreateGround(scene);
-    var camera = createFreeCamera(scene);
+    var freeCamera = createFreeCamera(scene);
     var tank = createTank(scene);
+    var followCamera = createFollowCamera(scene, tank);
+    scene.activeCamera = followCamera;
     createLights(scene);
-    
     return scene;
 };
 
@@ -62,15 +73,26 @@ function createFreeCamera(scene)
     return camera;
 }
 
+function createFollowCamera(scene,target)
+{
+    var camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
+    camera.radius = 20; //how far from object to follow
+    camera.heightOffset = 4; // how high above object to place camera
+    camera.rotationOffset = 180; // viewing angle
+    camera.cameraAcceleration = 0.5; // ow fast to move
+    camera.maxCameraSpeed = 50; // speed limit
+    return camera;
+}
+
 function createTank(scene)
 {
-    var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
+    var tank = new BABYLON.MeshBuilder.CreateBox("HeroTank", {height: 1, depth: 6, width:6}, scene);
     var tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
     tankMaterial.diffuseColor = new BABYLON.Color3.Red;
     tankMaterial.emissiveColor = new BABYLON.Color3.Blue;
     tank.material = tankMaterial;
 
-    tank.position.y += 0.6;
+    tank.position.y += 2;
     return tank;
 }
 
