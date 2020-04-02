@@ -16,99 +16,31 @@ function startGame() {
 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
-    scene.ambientColor = new BABYLON.Color3(0, 1, 0);
+    var ground = CreateGround(scene);
 
-    // Geometries & materials
-
-    var ground = BABYLON.Mesh.CreateGround("myGround", 60, 60, 50, scene);
-    var mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
-    mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 1, 0.4);
-    mirrorMaterial.specularColor = new BABYLON.Color3.Black;
-    mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true);
-    mirrorMaterial.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, -2.0);
-    mirrorMaterial.reflectionTexture.level = 1; // select the level (0.0 > 1.0) of the reflection
-    ground.material = mirrorMaterial;
-
-    var spheres = [];
-    var sphereMaterials = [];
-
-    for (var i = 0 ; i < 10 ; i++)
-    {
-        spheres[i] = BABYLON.Mesh.CreateSphere("mySphere" + i, 32, 2, scene);
-        spheres[i].position.x += 3 * i - 9;
-        spheres[i].position.y += 5;
-        sphereMaterials[i] = new BABYLON.StandardMaterial("sphereMaterial" + i, scene);
-        spheres[i].material = sphereMaterials[i];
-
-        mirrorMaterial.reflectionTexture.renderList.push(spheres[i]);
-    }
-
-    sphereMaterials[0].ambientColor = new BABYLON.Color3(0, .5, 0);
-    sphereMaterials[0].diffuseColor = new BABYLON.Color3(5, 0, 0);
-    sphereMaterials[0].specularColor = new BABYLON.Color3(0, 0, 0);
-
-    sphereMaterials[1].ambientColor = new BABYLON.Color3(0, .5, 0);
-    sphereMaterials[1].diffuseColor = new BABYLON.Color3(5, 0, 1);
-    sphereMaterials[1].specularColor = new BABYLON.Color3(0, 0, 3);
-    sphereMaterials[1].specularPower = 256;
-
-    sphereMaterials[2].ambientColor = new BABYLON.Color3(0, .5, 0);
-    sphereMaterials[2].diffuseColor = new BABYLON.Color3(0, 0, 0);
-    sphereMaterials[2].emissiveColor = new BABYLON.Color3(0, 0, 1);
-
-    sphereMaterials[3].diffuseTexture = new BABYLON.Texture("images/lightning.jfif", scene);
-    sphereMaterials[3].emissiveColor = new BABYLON.Color3.Green;
-
-    sphereMaterials[4].diffuseTexture = new BABYLON.Texture("images/lightning.jfif", scene);
-    sphereMaterials[4].emissiveColor = new BABYLON.Color3.Yellow;
-
-    sphereMaterials[5].diffuseTexture = new BABYLON.Texture("images/lightning.jfif", scene);
-    sphereMaterials[5].emissiveColor = new BABYLON.Color3.Red;
-
-    sphereMaterials[6].ambientColor = new BABYLON.Color3(0, .8, 0);
-    sphereMaterials[6].diffuseColor = new BABYLON.Color3(1, 0, 0);
-    sphereMaterials[6].alpha = 0.5;
-
-    sphereMaterials[7].diffuseTexture = new BABYLON.Texture("images/fire.jpg", scene);
-    sphereMaterials[7].diffuseTexture.hasAlpha = false;
-    sphereMaterials[7].emissiveColor = new BABYLON.Color3.Red;
-    sphereMaterials[5].diffuseTexture.uScale *=3;
-
-    sphereMaterials[8].ambientColor = new BABYLON.Color3(0, .3, 0);
-    sphereMaterials[8].bumpTexture = new BABYLON.Texture("images/fire.jpg", scene);
-    sphereMaterials[8].bumpTexture.level = 15.0;
-
-    sphereMaterials[9].diffuseTexture = new BABYLON.VideoTexture("video", ["videos/textureVideo2.mp4"], scene);
-
-
-
-    // lights
-    var light = new BABYLON.PointLight('myPointLight', new BABYLON.Vector3(0,3,0), scene );
-    light.intensity = .5;
-    light.diffuse = new BABYLON.Color3(1, .5, .5);
-
-    var light2 = new BABYLON.PointLight("myPointLight2", new BABYLON.Vector3(0, 3, -10), scene);
-    light2.intensity = .5;
-    light2.diffuse = new BABYLON.Color3(.5, .5, 1);
-
-    var counter = 0;
-
-    scene.registerBeforeRender(function () {
-        
-        for(var i = 0; i < spheres.length-1 ; i++)
-        {
-            spheres[i].position.y = 2*i * Math.sin((i * counter)/2);
-            counter+=.0001;
-        }
-        sphereMaterials[4].diffuseTexture.uOffset += 0.0005;
-        sphereMaterials[5].diffuseTexture.uScale += .03;
-    });
-
-    var camera = new BABYLON.FreeCamera("myCamera", new BABYLON.Vector3(0, 0, -10), scene);
+    var camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0,0,0),scene);
     camera.attachControl(canvas);
+    camera.position.y = 5000;
+    camera.checkCollisions = true;
+    camera.applyGravity = true; // prevents camera from flying.
+
+    var light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-.1, -1, 0),scene);
     
     return scene;
 };
+
+function CreateGround(scene)
+{
+    var ground = new BABYLON.Mesh.CreateGroundFromHeightMap("ground","images/hmap1.png", 2000,2000,20,0,1000,scene,false,OnGroundCreated);
+    function OnGroundCreated()
+    {
+        var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg", scene);
+        ground.material = groundMaterial;
+        ground.checkCollisions = true;
+    }
+    return ground;
+}
 
 window.addEventListener("resize", function () {
     engine.resize();
