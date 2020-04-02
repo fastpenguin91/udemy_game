@@ -66,7 +66,34 @@ function modifySettings() {
 
     scene.onPointerDown = function()
     {
-        canvas.requestPointerLock();
+        if(!scene.alreadyLocked) {
+            console.log("Requesting pointer lock");
+            canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock ||
+            canvas.webkitRequestPointerLock;
+            canvas.requestPointerLock();
+            
+            //canvas.requestPointerLock(); // allows aiming via pointer
+        } else {
+            console.log("not requesting because we ar ealready locked");
+        }
+       
+    }
+
+    document.addEventListener("pointerlockchange", pointerLockListener);
+    document.addEventListener("mspointerlockchange", pointerLockListener);
+    document.addEventListener("mozpointerlockchange", pointerLockListener);
+    document.addEventListener("webkitpointerlockchange", pointerLockListener);
+
+    function pointerLockListener()
+    {
+        var element = document.pointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement || document.pointerLockElement || null;
+
+        if (element){
+            scene.alreadyLocked = true;
+        } else {
+            scene.alreadyLocked = false;
+        }
+
     }
 
 }
