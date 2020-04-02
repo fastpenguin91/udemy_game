@@ -19,9 +19,8 @@ var createScene = function () {
     var scene = new BABYLON.Scene(engine);
     var ground = CreateGround(scene);
     var camera = createFreeCamera(scene);
-
-
-    var light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-.1, -1, 0),scene);
+    var tank = createTank(scene);
+    createLights(scene);
     
     return scene;
 };
@@ -37,6 +36,11 @@ function CreateGround(scene)
         ground.checkCollisions = true;
     }
     return ground;
+}
+
+function createLights(scene){
+    var light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-.1, -1, 0), scene);
+    var light1 = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-1, -1, 0), scene);
 }
 
 function createFreeCamera(scene)
@@ -56,6 +60,18 @@ function createFreeCamera(scene)
     camera.keysLeft.push('A'.charCodeAt(0));
 
     return camera;
+}
+
+function createTank(scene)
+{
+    var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
+    var tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
+    tankMaterial.diffuseColor = new BABYLON.Color3.Red;
+    tankMaterial.emissiveColor = new BABYLON.Color3.Blue;
+    tank.material = tankMaterial;
+
+    tank.position.y += 0.6;
+    return tank;
 }
 
 window.addEventListener("resize", function () {
