@@ -90,7 +90,7 @@ function createTank(scene)
     tank.material = tankMaterial;
     tank.position.y += 2;
     tank.speed = 1;
-//    tank.frontVector = new BABYLON.Vector3(0, 0, 1);
+    tank.frontVector = new BABYLON.Vector3(0, 0, 1);
     tank.move = function()
     {
         var yMovement = 0;
@@ -98,16 +98,20 @@ function createTank(scene)
             yMovement = -2;
         }
         if (isWPressed) {
-            tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement, 1 * tank.speed));
+            console.log("yea");
+            console.log(tank);
+            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed,tank.speed));
         }
         if (isSPressed) {
-            tank.moveWithCollisions(new BABYLON.Vector3(0,yMovement, -1 * tank.speed));
+            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-1 * tank.speed, -1 * tank.speed, -1 * tank.speed));
         }
         if (isAPressed) {
-            tank.moveWithCollisions(new BABYLON.Vector3(-1 * tank.speed,yMovement, 0));
+            tank.rotation.y -= .1;
+            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y),0,Math.cos(tank.rotation.y));
         }
         if (isEPressed) {
-            tank.moveWithCollisions(new BABYLON.Vector3(1 * tank.speed, yMovement,0));
+            tank.rotation.y += .1;
+            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y),0,Math.cos(tank.rotation.y));
         }
         
     }
