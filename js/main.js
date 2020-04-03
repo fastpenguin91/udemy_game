@@ -50,6 +50,11 @@ function startGame() {
         if(heroDude) {
             heroDude.Dude.move();
         }
+        if(scene.dudes) {
+            for(var q = 0; q< scene.dudes.length; q++) {
+                scene.dudes[q].Dude.move();
+            }
+        }
 
         scene.render();
     }
@@ -164,9 +169,58 @@ function createHeroDude(scene)
         heroDude.scaling = new BABYLON.Vector3(.2,.2,.2);
         heroDude.speed = 2;
         scene.beginAnimation(skeletons[0],0,120,true,1.0);
-
         var hero = new Dude(heroDude, 2);
+
+        scene.dudes = [];
+        for ( var q = 0; q< 10; q++) {
+            scene.dudes[q] = DoClone(heroDude, skeletons, q);
+            scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
+            var temp = new Dude(scene.dudes[q], 2);
+        }
     }
+
+}
+
+function DoClone(original, skeletons, id) {
+
+    var myClone;
+
+    var xrand = Math.floor(Math.random() * 501) - 250;
+    var zrand = Math.floor(Math.random() * 501) - 250;
+
+    myClone = original.clone("clone_"+ id);
+    myClone.position = new BABYLON.Vector3(xrand,0,zrand);
+
+    if (!skeletons) {
+        return myClone;
+    } else {
+    
+        if(!original.getChildren()) {
+            myClone.skeleton = skeletons[0].clone("clone_" + id + "_skeleton");
+            return myClone;
+        } else {
+            if(skeletons.length == 1) // this means one skeleton controlling/animating all the children
+            {
+                var clonedSkeleton = skeletons[0].clone("clonde_" + id + "_skeleton");
+                myClone.skeleton = clonedSkeleton;
+                var numChildren = myClone.getChildren().length;
+                for(var i = 0; i < numChildren; i++) {
+                    myClone.getChildren()[i].skeleton = clonedSkeleton;
+                }
+                return myClone;
+            }
+            else if (skeletons.length == original.getChildren().length)
+            {
+                for ( var i = 0; i < myClone.getChildren().length; i++)
+                { //Most probably each child has its own skeleton
+                    myClone.getChildren()[i].skeleton = skeletons[i].clone("clone_" + id +"_skeleton_"+i);
+                }
+                return myClone;
+            }
+        }
+    }
+
+    return myClone;
 
 }
 
