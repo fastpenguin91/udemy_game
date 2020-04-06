@@ -461,8 +461,8 @@ function createTank(scene)
 
 function createHeroDude(scene)
 {
-    BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported); // I'm not supposed to need this line but I do need it... end of vid31
-    var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude", "dude.babylon");
+    //BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported); // I'm not supposed to need this line but I do need it... end of vid31
+    var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude/", "dude.babylon");
 
     meshTask.onSuccess = function (task) {
         
