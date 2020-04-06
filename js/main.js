@@ -275,6 +275,25 @@ function createTank(scene)
         var force = new BABYLON.Vector3(fVector.x * 100, (fVector.y+.1) * 100, fVector.z * 100);
         cannonBall.physicsImpostor.applyImpulse(force, cannonBall.getAbsolutePosition());
         
+        cannonBall.actionManager = new BABYLON.ActionManager(scene);
+        
+        scene.dudes.forEach(function(dude){
+
+            cannonBall.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                {
+                    trigger : BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: dude.Dude.bounder
+                },
+                function () {
+                    console.log("hit!");
+                    dude.Dude.bounder.dispose();
+                    dude.dispose();
+                }
+            ))
+
+
+        });
+        
         setTimeout(function() {
             cannonBall.dispose();
         },3000);
@@ -297,7 +316,8 @@ function createHeroDude(scene)
         var hero = new Dude(heroDude, 2, -1, scene,.2);
 
         scene.dudes = [];
-        for ( var q = 0; q< 10; q++) {
+        scene.dudes[0] = heroDude;
+        for ( var q = 1; q <= 10; q++) {
             scene.dudes[q] = DoClone(heroDude, skeletons, q);
             scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
             var temp = new Dude(scene.dudes[q], 2, q, scene, .2);
