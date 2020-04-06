@@ -6,6 +6,7 @@ var isWPressed = false;
 var isSPressed = false;
 var isAPressed = false;
 var isEPressed = false;
+var isBPressed = false;
 document.addEventListener("DOMContentLoaded", startGame);
 
 class Dude {
@@ -49,7 +50,6 @@ class Dude {
         var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
         this.dudeMesh.rotation.y = alpha;
         if(distance > 30) {
-            console.log("moving");
             this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         }
 
@@ -134,15 +134,9 @@ function startGame() {
     var tank = scene.getMeshByName("heroTank");
     var toRender = function () {
         tank.move();
-        var heroDude = scene.getMeshByName("heroDude");
-        if(heroDude) {
-            heroDude.Dude.move();
-        }
-        if(scene.dudes) {
-            for(var q = 0; q< scene.dudes.length; q++) {
-                scene.dudes[q].Dude.move();
-            }
-        }
+        tank.fire();
+        moveHeroDude();
+        moveOtherDudes();
 
         scene.render();
     }
@@ -151,6 +145,7 @@ function startGame() {
 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
+    scene.enablePhysics();
     var ground = CreateGround(scene);
     var freeCamera = createFreeCamera(scene);
     var tank = createTank(scene);
@@ -158,20 +153,26 @@ var createScene = function () {
     scene.activeCamera = followCamera;
     createLights(scene);
     createHeroDude(scene);
-
+    //var sphere = new BABYLON.Mesh.CreateSphere("s", 10, 1, scene);
+    //scene.enablePhysics();
+    //sphere.physicsImpostor = new BABYLON.physicsImposter(sphere, BABYLON.PhysicsImpostor.SphereImpostor,
+    //    { mass: 10 }, scene);
+    //sphere.physicsImpostor.applyImpulse(new BABYLON.Vector3(1, 1, 1), new BABYLON.Vector3(1, 1, 1));
 
     return scene;
 };
 
-function CreateGround(scene)
-{
+function CreateGround(scene) {
     var ground = new BABYLON.Mesh.CreateGroundFromHeightMap("ground","images/hmap1.png", 2000,2000,20,0,1000,scene,false,OnGroundCreated);
+    console.log(ground);
     function OnGroundCreated()
     {
         var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg", scene);
         ground.material = groundMaterial;
         ground.checkCollisions = true;
+        ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground,
+            BABYLON.PhysicsImpostor.HeightmapImpostor, {mass: 0}, scene);
     }
     return ground;
 }
@@ -243,6 +244,30 @@ function createTank(scene)
         }
         
     }
+
+    tank.fire = function()
+    {
+        //console.log("firing dangit");
+        if(!isBPressed) return;
+
+        var cannonBall = new BABYLON.Mesh.CreateSphere("cannonBall", 32, 2, scene);
+        cannonBall.material = new BABYLON.StandardMaterial("Fire", scene);
+        cannonBall.material.diffuseTexture = new BABYLON.Texture("images/fire.jpg",scene);
+
+        var tank = this;
+        var pos = tank.position;
+
+        cannonBall.position = new BABYLON.Vector3(pos.x, pos.y +1, pos.z);
+        cannonBall.position.addInPlace(tank.frontVector.multiplyByFloats(5,5,5));
+
+        cannonBall.physicsImpostor = new BABYLON.PhysicsImpostor(cannonBall,
+            BABYLON.PhysicsImpostor.SphereImpostor, {mass : 1}, scene);
+            
+        var fVector = tank.frontVector;
+        var force = new BABYLON.Vector3(fVector.x * 100 , (fVector.y+.1) * 100, fVector.z * 100);
+        cannonBall.physicsImpostor.applyImpulse(force, cannonBall.getAbsolutePosition());
+    }
+
     return tank;
 }
 
@@ -312,7 +337,22 @@ function DoClone(original, skeletons, id) {
 
 }
 
+function moveHeroDude()
+{
+    var heroDude = scene.getMeshByName("heroDude");
+    if(heroDude) {
+        heroDude.Dude.move();
+    }
+}
 
+function moveOtherDudes()
+{
+    if(scene.dudes) {
+        for(var q = 0; q< scene.dudes.length; q++) {
+            scene.dudes[q].Dude.move();
+        }
+    }
+}
 
 window.addEventListener("resize", function () {
     engine.resize();
@@ -373,6 +413,11 @@ document.addEventListener("keydown", function(event)
     {
         isEPressed = true;
     }
+    if(event.key == 'b' || event.key == 'B')
+    {
+        isBPressed = true;
+        console.log("fired!");
+    }
 });
 
 document.addEventListener("keyup", function(event)
@@ -392,5 +437,9 @@ document.addEventListener("keyup", function(event)
     if(event.key == 'e' || event.key == 'E')
     {
         isEPressed = false;
+    }
+    if(event.key == 'b' || event.key == 'B')
+    {
+        isBPressed = false;
     }
 })
