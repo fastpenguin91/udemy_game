@@ -245,16 +245,24 @@ function createTank(scene)
         
     }
 
+    tank.canFire = true;
     tank.fire = function()
     {
+        var tank = this;
         //console.log("firing dangit");
         if(!isBPressed) return;
+        if(!tank.canFire) return;
+        tank.canFire = false;
+
+        setTimeout(function() {
+            tank.canFire = true;
+        }, 500)
 
         var cannonBall = new BABYLON.Mesh.CreateSphere("cannonBall", 32, 2, scene);
         cannonBall.material = new BABYLON.StandardMaterial("Fire", scene);
         cannonBall.material.diffuseTexture = new BABYLON.Texture("images/fire.jpg",scene);
 
-        var tank = this;
+       
         var pos = tank.position;
 
         cannonBall.position = new BABYLON.Vector3(pos.x, pos.y +1, pos.z);
@@ -264,8 +272,13 @@ function createTank(scene)
             BABYLON.PhysicsImpostor.SphereImpostor, {mass : 1}, scene);
             
         var fVector = tank.frontVector;
-        var force = new BABYLON.Vector3(fVector.x * 100 , (fVector.y+.1) * 100, fVector.z * 100);
+        var force = new BABYLON.Vector3(fVector.x * 100, (fVector.y+.1) * 100, fVector.z * 100);
         cannonBall.physicsImpostor.applyImpulse(force, cannonBall.getAbsolutePosition());
+        
+        setTimeout(function() {
+            cannonBall.dispose();
+        },3000);
+
     }
 
     return tank;
