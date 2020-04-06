@@ -16,6 +16,7 @@ class Dude {
         this.dudeMesh = dudeMesh;
         this.id = id;
         this.scene = scene;
+        this.health = 3;
         dudeMesh.Dude = this;
 
         if (speed) {
@@ -29,9 +30,11 @@ class Dude {
         } else {
             this.scaling = 1;
         }
-        if(Dude.boundingBoxParameters == undefined)
-        {
+        if(Dude.boundingBoxParameters == undefined) {
             Dude.boundingBoxParameters = this.calculateBoundingBoxParameters();
+        }
+        if (Dude.particleSystem == undefined) {
+            Dude.particleSystem = this.createDudeParticleSystem();
         }
 
         this.bounder = this.createBoundingBox();
@@ -124,6 +127,54 @@ class Dude {
 
         return {lengthX : _lengthX , lengthY: _lengthY , lengthZ : _lengthZ};
     }
+
+    createDudeParticleSystem = function()
+    {
+        // create a particle system
+        var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+
+        // Texture of each particle
+        particleSystem.particleTexture = new BABYLON.Texture("images/flare.png", scene);
+
+        // where particles come from
+        particleSystem.emitter = new BABYLON.Vector3(0,0,0); // starting object, the emitter
+
+        //colors of all particles
+        particleSystem.color1 = new BABYLON.Color4(1, 0, 0, 1.0);
+        particleSystem.color2 = new BABYLON.Color4(1, 0, 0, 1.0);
+        particleSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0);
+
+        particleSystem.emitRate = 100;
+
+        // set the gravity of all particles
+        particleSystem.gravity = new BABYLON.Vector3(0, -9.81, 0);
+
+        // Direction of each particle after it has been emitted
+        particleSystem.direction1 = new BABYLON.Vector3(0, -1, 0);
+        particleSystem.direction2 = new BABYLON.Vector3(0, -1, 0);
+
+        return particleSystem;
+    }
+
+    decreaseHealth(hitPoint)
+    {
+        Dude.particleSystem.emitter = hitPoint;
+        this.health--;
+        Dude.particleSystem.start();
+        setTimeout(function() {
+            Dude.particleSystem.stop();
+        }, 300);
+        if(this.health <= 0)
+        {
+            this.gotKilled();
+        }
+    }
+
+    gotKilled() {
+        this.bounder.dispose();
+        this.dudeMesh.dispose();
+    }
+    
 }
 
 
@@ -335,13 +386,10 @@ function createTank(scene)
             var pickInfo = pickInfos[i];
             if (pickInfo.pickedMesh){
                 if(pickInfo.pickedMesh.name.startsWith("bounder")) {
-                    console.log("I hit a bounder");
-                    var bounder = pickInfo.pickedMesh;
-                    bounder.dudeMesh.dispose();
-                    bounder.dispose();
+
+                    pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
                 } else if (pickInfo.pickedMesh.name.startsWith("clone")) {
-                    var child = pickInfo.pickedMesh;
-                    child.parent.dispose();
+                    pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
 
 
