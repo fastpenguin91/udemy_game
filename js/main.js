@@ -7,6 +7,7 @@ var isSPressed = false;
 var isAPressed = false;
 var isEPressed = false;
 var isBPressed = false;
+var isRPressed = false;
 document.addEventListener("DOMContentLoaded", startGame);
 
 class Dude {
@@ -134,7 +135,8 @@ function startGame() {
     var tank = scene.getMeshByName("heroTank");
     var toRender = function () {
         tank.move();
-        tank.fire();
+        tank.fireCannonBalls();
+        tank.fireLaserBeams();
         moveHeroDude();
         moveOtherDudes();
 
@@ -222,6 +224,9 @@ function createTank(scene)
     tank.position.y += 2;
     tank.speed = 1;
     tank.frontVector = new BABYLON.Vector3(0, 0, 1);
+    tank.canFireCannonBalls = true;
+    tank.canFireLaser = true;
+    //tank.isPickable = false;
     tank.move = function()
     {
         var yMovement = 0;
@@ -245,17 +250,17 @@ function createTank(scene)
         
     }
 
-    tank.canFire = true;
-    tank.fire = function()
+    
+    tank.fireCannonBalls = function()
     {
         var tank = this;
         //console.log("firing dangit");
         if(!isBPressed) return;
-        if(!tank.canFire) return;
-        tank.canFire = false;
+        if(!tank.canFireCannonBalls) return;
+        tank.canFireCannonBalls = false;
 
         setTimeout(function() {
-            tank.canFire = true;
+            tank.canFireCannonBalls = true;
         }, 500)
 
         var cannonBall = new BABYLON.Mesh.CreateSphere("cannonBall", 32, 2, scene);
@@ -300,6 +305,51 @@ function createTank(scene)
 
     }
 
+    tank.fireLaserBeams = function()
+    {
+        var tank = this;
+        if (!isRPressed) return;
+        if (!tank.canFireLaser) return;
+        tank.canFireLaser = false;
+
+        setTimeout(function () {
+            tank.canFireLaser = true;
+        }, 500);
+
+        var origin = tank.position;
+        var direction = new BABYLON.Vector3(tank.frontVector.x, tank.frontVector.y + .1, tank.frontVector.z);
+        var ray = new BABYLON.Ray(origin, direction,1000);
+        var rayHelper = new BABYLON.RayHelper(ray);
+        rayHelper.show(scene, new BABYLON.Color3.Red);
+
+        setTimeout(function () {
+            rayHelper.hide(ray);
+        }, 200);
+
+        var pickInfos = scene.multiPickWithRay(ray, function (mesh) {
+            if(mesh.name == "heroTank") return false;
+            return true;
+        });
+
+        for ( var i = 0; i < pickInfos.length; i++){
+            var pickInfo = pickInfos[i];
+            if (pickInfo.pickedMesh){
+                if(pickInfo.pickedMesh.name.startsWith("bounder")) {
+                    console.log("I hit a bounder");
+                    var bounder = pickInfo.pickedMesh;
+                    bounder.dudeMesh.dispose();
+                    bounder.dispose();
+                } else if (pickInfo.pickedMesh.name.startsWith("clone")) {
+                    var child = pickInfo.pickedMesh;
+                    child.parent.dispose();
+                }
+
+
+            }
+        }
+
+    }
+
     return tank;
 }
 
@@ -311,6 +361,13 @@ function createHeroDude(scene)
         newMeshes[0].position = new BABYLON.Vector3(0,0,5); // the original dude
         newMeshes[0].name = "heroDude";
         var heroDude = newMeshes[0];
+
+        for (var i = 1; i < heroDude.getChildren().length; i++)
+        {
+            console.log(heroDude.getChildren()[i].name);
+            heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
+            console.log(heroDude.getChildren()[i].name);
+        }
         
         scene.beginAnimation(skeletons[0],0,120,true,1.0);
         var hero = new Dude(heroDude, 2, -1, scene,.2);
@@ -449,7 +506,12 @@ document.addEventListener("keydown", function(event)
     if(event.key == 'b' || event.key == 'B')
     {
         isBPressed = true;
-        console.log("fired!");
+        console.log("fired Cannon!");
+    }
+    if(event.key == 'r' || event.key == 'R')
+    {
+        isRPressed = true;
+        console.log("fired Laser!");
     }
 });
 
@@ -474,5 +536,10 @@ document.addEventListener("keyup", function(event)
     if(event.key == 'b' || event.key == 'B')
     {
         isBPressed = false;
+    }
+    if(event.key == 'r' || event.key == 'R')
+    {
+        isRPressed = false;
+        console.log("fired Laser!");
     }
 })
