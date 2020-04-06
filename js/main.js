@@ -174,6 +174,7 @@ class Dude {
     }
 
     gotKilled() {
+        scene.assets["dieSound"].play();
         Dude.particleSystem.emitter = this.bounder.position;
         Dude.particleSystem.emitRate = 2000;
 
@@ -226,12 +227,8 @@ var createScene = function () {
     scene.activeCamera = followCamera;
     createLights(scene);
     createHeroDude(scene);
-    //var sphere = new BABYLON.Mesh.CreateSphere("s", 10, 1, scene);
-    //scene.enablePhysics();
-    //sphere.physicsImpostor = new BABYLON.physicsImposter(sphere, BABYLON.PhysicsImpostor.SphereImpostor,
-    //    { mass: 10 }, scene);
-    //sphere.physicsImpostor.applyImpulse(new BABYLON.Vector3(1, 1, 1), new BABYLON.Vector3(1, 1, 1));
-
+    loadSounds(scene);
+    
     return scene;
 };
 
@@ -255,8 +252,29 @@ function createLights(scene){
     var light1 = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-1, -1, 0), scene);
 }
 
+function loadSounds(scene)
+{
+    var assetsManager = scene.assetsManager;
+    var binaryTask = assetsManager.addBinaryFileTask("laserSound", "sounds/laser.wav");
+    binaryTask.onSuccess = function (task) {
+        scene.assets["laserSound"] = new BABYLON.Sound("laser", task.data, scene, null, { loop: false });
+    }
+
+    binaryTask = assetsManager.addBinaryFileTask("cannonSound", "sounds/cannon.wav");
+    binaryTask.onSuccess = function (task) {
+        scene.assets["cannonSound"] = new BABYLON.Sound("cannon", task.data, scene, null, { loop: false });
+    }
+
+    binaryTask = assetsManager.addBinaryFileTask("dieSound", "sounds/die.wav");
+    binaryTask.onSuccess = function (task) {
+        scene.assets["dieSound"] = new BABYLON.Sound("die", task.data, scene, null, { loop: false });
+    }
+
+}
+
 function configureAssetsManager(scene)
 {
+    scene.assets = {};
     var assetsManager = new BABYLON.AssetsManager(scene);
     assetsManager.onProgress = function (remainingCount, totalCount, lastFinishedTask) {
         engine.loadingUIText = "We are loading the scene. " + remainingCount + " out of " + " items still need to be loaded.";
@@ -351,6 +369,8 @@ function createTank(scene)
             tank.canFireCannonBalls = true;
         }, 500)
 
+        scene.assets["cannonSound"].play();
+
         var cannonBall = new BABYLON.Mesh.CreateSphere("cannonBall", 32, 2, scene);
         cannonBall.material = new BABYLON.StandardMaterial("Fire", scene);
         cannonBall.material.diffuseTexture = new BABYLON.Texture("images/fire.jpg",scene);
@@ -404,6 +424,7 @@ function createTank(scene)
             tank.canFireLaser = true;
         }, 500);
 
+        scene.assets["laserSound"].play();
         var origin = tank.position;
         var direction = new BABYLON.Vector3(tank.frontVector.x, tank.frontVector.y + .1, tank.frontVector.z);
         var ray = new BABYLON.Ray(origin, direction,1000);
@@ -440,8 +461,7 @@ function createTank(scene)
 
 function createHeroDude(scene)
 {
-
-    BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported);
+    BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported); // I'm not supposed to need this line but I do need it... end of vid31
     var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude", "dude.babylon");
 
     meshTask.onSuccess = function (task) {
