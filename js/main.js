@@ -202,7 +202,7 @@ function startGame() {
     scene = createScene();
     modifySettings();
     var tank = scene.getMeshByName("heroTank");
-    var toRender = function () {
+    scene.toRender = function () {
         tank.move();
         tank.fireCannonBalls();
         tank.fireLaserBeams();
@@ -211,11 +211,13 @@ function startGame() {
 
         scene.render();
     }
-    engine.runRenderLoop(toRender);
+
+    scene.assetsManager.load();
 }
 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
+    scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
     var ground = CreateGround(scene);
     var freeCamera = createFreeCamera(scene);
@@ -252,6 +254,23 @@ function createLights(scene){
     var light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-.1, -1, 0), scene);
     var light1 = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-1, -1, 0), scene);
 }
+
+function configureAssetsManager(scene)
+{
+    var assetsManager = new BABYLON.AssetsManager(scene);
+    assetsManager.onProgress = function (remainingCount, totalCount, lastFinishedTask) {
+        engine.loadingUIText = "We are loading the scene. " + remainingCount + " out of " + " items still need to be loaded.";
+    };
+
+    assetsManager.onFinish = function (tasks) {
+        engine.runRenderLoop(function () {
+            scene.toRender();
+        });
+    };
+
+    return assetsManager;
+}
+
 
 function createFreeCamera(scene)
 {
@@ -423,6 +442,39 @@ function createHeroDude(scene)
 {
 
     BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported);
+    var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude", "dude.babylon");
+
+    meshTask.onSuccess = function (task) {
+        
+        onDudeImported(task.loadedMeshes, task.loadedParticleSystems, task.loadedSkeletons);
+        function onDudeImported(newMeshes, particleSystems, skeletons) {
+            newMeshes[0].position = new BABYLON.Vector3(0,0,5); // the original dude
+            newMeshes[0].name = "heroDude";
+            var heroDude = newMeshes[0];
+    
+            for (var i = 1; i < heroDude.getChildren().length; i++)
+            {
+                console.log(heroDude.getChildren()[i].name);
+                heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
+                console.log(heroDude.getChildren()[i].name);
+            }
+            
+            scene.beginAnimation(skeletons[0],0,120,true,1.0);
+            var hero = new Dude(heroDude, 2, -1, scene,.2);
+    
+            scene.dudes = [];
+            scene.dudes[0] = heroDude;
+            for ( var q = 1; q <= 10; q++) {
+                scene.dudes[q] = DoClone(heroDude, skeletons, q);
+                scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
+                var temp = new Dude(scene.dudes[q], 2, q, scene, .2);
+    
+            }
+        }
+
+
+    }
+
     function onDudeImported(newMeshes, particleSystems, skeletons) {
         newMeshes[0].position = new BABYLON.Vector3(0,0,5); // the original dude
         newMeshes[0].name = "heroDude";
@@ -447,6 +499,8 @@ function createHeroDude(scene)
 
         }
     }
+    
+    
 
 }
 
