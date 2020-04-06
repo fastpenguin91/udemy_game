@@ -41,7 +41,7 @@ class Dude {
         this.bounder.dudeMesh = this.dudeMesh;
     }
 
-    move()
+    followTank()
     {
 
         if (!this.bounder) return;
@@ -56,6 +56,10 @@ class Dude {
         if(distance > 30) {
             this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         }
+
+    }
+
+    moveFPS() {
 
     }
 
@@ -223,8 +227,8 @@ var createScene = function () {
     var ground = CreateGround(scene);
     var freeCamera = createFreeCamera(scene);
     var tank = createTank(scene);
-    var followCamera = createFollowCamera(scene, tank);
-    scene.activeCamera = followCamera;
+    scene.followCameraTank = createFollowCamera(scene, tank);
+    scene.activeCamera = scene.followCameraTank;
     createLights(scene);
     createHeroDude(scene);
     loadSounds(scene);
@@ -311,10 +315,18 @@ function createFreeCamera(scene)
 
 function createFollowCamera(scene,target)
 {
-    var camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
-    camera.radius = 20; //how far from object to follow
-    camera.heightOffset = 4; // how high above object to place camera
-    camera.rotationOffset = 180; // viewing angle
+    var camera = new BABYLON.FollowCamera(target.name + "FollowCamera", target.position, scene, target);
+    if(target.name == "heroDude")
+    {   
+        camera.radius = 40; //how far from object to follow
+        camera.heightOffset = 10; // how high above object to place camera
+        camera.rotationOffset = 0; // viewing angle
+    } else {
+        camera.radius = 20;
+        camera.heightOffset = 4; // how high above object to place camera
+        camera.rotationOffset = 180; // viewing angle
+    }
+    
     camera.cameraAcceleration = 0.5; // ow fast to move
     camera.maxCameraSpeed = 50; // speed limit
     return camera;
@@ -481,6 +493,7 @@ function createHeroDude(scene)
             
             scene.beginAnimation(skeletons[0],0,120,true,1.0);
             var hero = new Dude(heroDude, 2, -1, scene,.2);
+            scene.followCameraDude = createFollowCamera(scene, heroDude);
     
             scene.dudes = [];
             scene.dudes[0] = heroDude;
@@ -567,11 +580,10 @@ function DoClone(original, skeletons, id) {
 
 }
 
-function moveHeroDude()
-{
+function moveHeroDude() {
     var heroDude = scene.getMeshByName("heroDude");
     if(heroDude) {
-        heroDude.Dude.move();
+        heroDude.Dude.moveFPS();
     }
 }
 
@@ -579,7 +591,7 @@ function moveOtherDudes()
 {
     if(scene.dudes) {
         for(var q = 0; q< scene.dudes.length; q++) {
-            scene.dudes[q].Dude.move();
+            scene.dudes[q].Dude.followTank();
         }
     }
 }
@@ -652,6 +664,14 @@ document.addEventListener("keydown", function(event)
     {
         isRPressed = true;
         console.log("fired Laser!");
+    }
+    if(event.key == 't' || event.key == 'T')
+    {
+        scene.activeCamera = scene.followCameraTank;
+    }
+    if(event.key == 'y' || event.key == 'Y')
+    {
+        scene.activeCamera = scene.followCameraDude;
     }
 });
 
