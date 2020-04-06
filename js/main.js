@@ -153,6 +153,9 @@ class Dude {
         particleSystem.direction1 = new BABYLON.Vector3(0, -1, 0);
         particleSystem.direction2 = new BABYLON.Vector3(0, -1, 0);
 
+        particleSystem.minEmitPower = 6;
+        particleSystem.maxEmitPower = 10;
+
         return particleSystem;
     }
 
@@ -171,6 +174,21 @@ class Dude {
     }
 
     gotKilled() {
+        Dude.particleSystem.emitter = this.bounder.position;
+        Dude.particleSystem.emitRate = 2000;
+
+        Dude.particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
+        Dude.particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
+
+        // Direction of each particle after it has been emitted
+        Dude.particleSystem.direction1 = new BABYLON.Vector3(0, 1, 0);
+        Dude.particleSystem.direction2 = new BABYLON.Vector3(0, -1, 0);
+
+        Dude.particleSystem.start();
+        setTimeout(function () {
+            Dude.particleSystem.stop();
+        }, 300);
+
         this.bounder.dispose();
         this.dudeMesh.dispose();
     }
@@ -342,8 +360,8 @@ function createTank(scene)
                 },
                 function () {
                     console.log("hit!");
-                    dude.Dude.bounder.dispose();
-                    dude.dispose();
+                    if(dude.Dude.bounder._isDisposed) return;
+                    dude.Dude.gotKilled();
                 }
             ))
 
