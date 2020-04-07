@@ -76,9 +76,10 @@ class Dude {
         }
 
         if (!this.bounder) return;
-        this.dudeMesh.position = new BABYLON.Vector3(this.bounder.position.x,
-            this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
-    
+
+        this.adjustYPosition();
+        this.adjustXZPosition();
+
         var direction = this.frontVector;
         var dir = direction.normalize();
         var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
@@ -102,6 +103,30 @@ class Dude {
             this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
         }
 
+    }
+
+    adjustYPosition()
+    {
+        var origin = new BABYLON.Vector3(this.dudeMesh.position.x, 1000, this.dudeMesh.position.z);
+        var direction = new BABYLON.Vector3(0, -1, 0);
+        var ray = new BABYLON.Ray(origin, direction, 10000);
+        var pickInfo = scene.pickWithRay(ray, function(mesh)
+        {
+            if(mesh.name == "ground") return true;
+            return false;
+        });
+
+        var groundHeight = pickInfo.pickedPoint.y;
+        this.dudeMesh.position.y = groundHeight;
+        this.bounder.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY / 2.0;
+
+        return groundHeight;
+    }
+
+    adjustXZPosition()
+    {
+        this.dudeMesh.position.x = this.bounder.position.x;
+        this.dudeMesh.position.z = this.bounder.position.z;
     }
 
     createBoundingBox()
