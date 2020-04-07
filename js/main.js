@@ -17,6 +17,7 @@ class Dude {
         this.id = id;
         this.scene = scene;
         this.health = 3;
+        this.frontVector = new BABYLON.Vector3(0,0, -1);
         dudeMesh.Dude = this;
 
         if (speed) {
@@ -60,6 +61,46 @@ class Dude {
     }
 
     moveFPS() {
+        if(scene.activeCamera != scene.followCameraDude)
+        {
+            this.dudeMesh.animatableObject.pause();
+            return;
+        }
+        if(isWPressed || isSPressed)
+        {
+            this.dudeMesh.animatableObject.restart();
+        }
+        else
+        {
+            this.dudeMesh.animatableObject.pause();
+        }
+
+        if (!this.bounder) return;
+        this.dudeMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+    
+        var direction = this.frontVector;
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.dudeMesh.rotation.y = alpha;
+        if(isWPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+        if(isSPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+        }
+        if(isEPressed)
+        {
+            var alpha = this.dudeMesh.rotation.y;
+            alpha+= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
+        if(isEPressed)
+        {
+            var alpha = this.dudeMesh.rotation.y;
+            alpha -= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
 
     }
 
@@ -347,6 +388,10 @@ function createTank(scene)
     //tank.isPickable = false;
     tank.move = function()
     {
+        if(scene.activeCamera != scene.followCameraTank)
+        {
+            return;
+        }
         var yMovement = 0;
         if (tank.position.y > 2) {
             yMovement = -2;
@@ -491,7 +536,7 @@ function createHeroDude(scene)
                 console.log(heroDude.getChildren()[i].name);
             }
             
-            scene.beginAnimation(skeletons[0],0,120,true,1.0);
+            heroDude.animatableObject = scene.beginAnimation(skeletons[0],0,120,true,1.0);
             var hero = new Dude(heroDude, 2, -1, scene,.2);
             scene.followCameraDude = createFollowCamera(scene, heroDude);
     
