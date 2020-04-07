@@ -95,7 +95,7 @@ class Dude {
             alpha+= .1;
             this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
         }
-        if(isEPressed)
+        if(isAPressed)
         {
             var alpha = this.dudeMesh.rotation.y;
             alpha -= .1;
@@ -635,7 +635,8 @@ function moveHeroDude() {
 function moveOtherDudes()
 {
     if(scene.dudes) {
-        for(var q = 0; q< scene.dudes.length; q++) {
+        for(var q = 1; q< scene.dudes.length; q++) {
+            console.log("dude " + q + " following tank");
             scene.dudes[q].Dude.followTank();
         }
     }
@@ -708,7 +709,7 @@ document.addEventListener("keydown", function(event)
     if(event.key == 'r' || event.key == 'R')
     {
         isRPressed = true;
-        console.log("fired Laser!");
+        console.log("fired Laser hellooooo!");
     }
     if(event.key == 't' || event.key == 'T')
     {
