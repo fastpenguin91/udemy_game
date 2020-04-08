@@ -61,6 +61,7 @@ class Dude {
     }
 
     moveFPS() {
+        scene.activeCamera = scene.activeCameras[0];
         if(scene.activeCamera != scene.followCameraDude && scene.activeCamera != scene.freeCameraDude)
         {
             this.dudeMesh.animatableObject.pause();
@@ -123,8 +124,8 @@ class Dude {
             var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
             this.dudeMesh.rotation.y = alpha;
 
-            this.bounder.position.x = scene.freeCameraDude.position.x;
-            this.bounder.position.z = scene.freeCameraDude.position.z;
+            this.bounder.position.x = scene.freeCameraDude.position.x;//these two lines are supposed to fix back of head showing problem. //- this.frontVector.x * 1.8;
+            this.bounder.position.z = scene.freeCameraDude.position.z;//but I dont have the problem and adding these lines (comments) breaks the code. //- this.frontVector.z * 1.8;
 
         }
 
@@ -132,11 +133,11 @@ class Dude {
 
     fireGun()
     {
-        var scene = this.scene;
+        //var scene = this.scene;
         scene.assets["gunSound"].play();
         var width = scene.getEngine().getRenderWidth();
         var height = scene.getEngine().getRenderHeight();
-        var pickInfo = scene.pick(width/2, height/2);
+        var pickInfo = scene.pick(width/4, height/2, null, false, scene.activeCameras[0]);
 
         if (pickInfo.pickedMesh){
             if(pickInfo.pickedMesh.name.startsWith("bounder")) {
@@ -160,6 +161,7 @@ class Dude {
             return false;
         });
 
+        if(!pickInfo.pickedPoint) return;
         var groundHeight = pickInfo.pickedPoint.y;
         this.dudeMesh.position.y = groundHeight;
         this.bounder.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY / 2.0;
@@ -341,6 +343,7 @@ var createScene = function () {
     var ground = CreateGround(scene);
     var tank = createTank(scene);
     scene.followCameraTank = createFollowCamera(scene, tank);
+    scene.followCameraTank.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
     scene.activeCamera = scene.followCameraTank;
     createLights(scene);
     createHeroDude(scene);
@@ -394,7 +397,7 @@ function loadSounds(scene)
 
 }
 
-function loadCrossHair(scene){
+function loadCrosshair(scene){
     var impact = new BABYLON.Mesh.CreateBox("impact", .01, scene);
     impact.parent = scene.freeCameraDude;
 
@@ -463,6 +466,13 @@ function createFollowCamera(scene,target)
     return camera;
 }
 
+function createArcRotateCamera(scene, target)
+{
+    var camera = new BABYLON.ArcRotateCamera("arc", 0, 1, 50, target);
+
+    return camera;
+}
+
 function createTank(scene)
 {
     var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
@@ -476,8 +486,9 @@ function createTank(scene)
     tank.canFireCannonBalls = true;
     tank.canFireLaser = true;
     //tank.isPickable = false;
-    tank.move = function()
-    {
+    tank.move = function() {
+        scene.activeCamera = scene.activeCameras[0];
+
         if(scene.activeCamera != scene.followCameraTank)
         {
             return;
@@ -629,11 +640,16 @@ function createHeroDude(scene)
             heroDude.animatableObject = scene.beginAnimation(skeletons[0],0,120,true,1.0);
             var hero = new Dude(heroDude, 2, -1, scene,.2);
             scene.followCameraDude = createFollowCamera(scene, heroDude);
+            scene.followCameraDude.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
+            scene.activeCameras[0] = scene.followCameraDude;
+
             var freeCamPosition = new BABYLON.Vector3(heroDude.position.x,
                 heroDude.position.y + Dude.boundingBoxParameters.lengthY + .2,
                 heroDude.position.z);
             scene.freeCameraDude = createFreeCamera(scene,freeCamPosition);
-            loadCrossHair(scene);
+            scene.freeCameraDude.viewport = new BABYLON.Viewport(0, 0, .5, 1);
+            
+            loadCrosshair(scene);
             scene.dudes = [];
             scene.dudes[0] = heroDude;
             for ( var q = 1; q <= 10; q++) {
@@ -642,6 +658,11 @@ function createHeroDude(scene)
                 var temp = new Dude(scene.dudes[q], 2, q, scene, .2);
     
             }
+
+            scene.arcRotateCamera = createArcRotateCamera(scene, scene.dudes[1]);
+            scene.arcRotateCamera.viewport = new BABYLON.Viewport(.5, 0, .5, 1);
+            scene.activeCameras.push(scene.arcRotateCamera);
+            
         }
 
 
@@ -756,6 +777,7 @@ function modifySettings() {
             
             //canvas.requestPointerLock(); // allows aiming via pointer
         } else {
+            scene.activeCamera = scene.activeCameras[0];
             if(scene.activeCamera == scene.freeCameraDude)
             {
                 var heroDude = scene.dudes[0];
@@ -816,15 +838,15 @@ document.addEventListener("keydown", function(event)
     }
     if(event.key == 't' || event.key == 'T')
     {
-        scene.activeCamera = scene.followCameraTank;
+        scene.activeCameras[0] = scene.followCameraTank;
     }
     if(event.key == 'y' || event.key == 'Y')
     {
-        scene.activeCamera = scene.followCameraDude;
+        scene.activeCameras[0] = scene.followCameraDude;
     }
     if(event.key == 'u' || event.key == 'U')
     {
-        scene.activeCamera = scene.freeCameraDude;
+        scene.activeCameras[0] = scene.freeCameraDude;
     }
 });
 
