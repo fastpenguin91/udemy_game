@@ -203,8 +203,8 @@ class Dude {
     }
 
     calculateBoundingBoxParameters() {
-        var minX = 999999; var minY = 999999; var minZ = 999999;
-        var maxX = -99999; var maxY = -99999; var maxZ = -99999;
+        var minX = 999999; var minY = 99999; var minZ = 999999;
+        var maxX = -99999; var maxY = -999999; var maxZ = -99999;
 
         var children = this.dudeMesh.getChildren();
 
@@ -272,7 +272,6 @@ class Dude {
 
         particleSystem.minEmitPower = 6;
         particleSystem.maxEmitPower = 10;
-
         return particleSystem;
     }
 
@@ -293,7 +292,9 @@ class Dude {
     gotKilled() {
         var scene = this.scene;
         scene.assets["dieSound"].play();
+
         Dude.particleSystem.emitter = this.bounder.position;
+        console.log(this.bounder);
         Dude.particleSystem.emitRate = 2000;
 
         Dude.particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
@@ -343,8 +344,7 @@ function startFirstScene()
     scene.assetsManager.load();
 }
 
-function startSecondScene()
-{
+function startSecondScene() {
     Game.scenes[Game.activeScene] = createSecondScene();
     var scene = Game.scenes[Game.activeScene];
     modifySettings(scene);
@@ -355,32 +355,31 @@ function startSecondScene()
         tank.fireLaserBeams(scene);
         moveHeroDude(scene);
         moveOtherDudes(scene);
-
         scene.render();
     }
 
     scene.assetsManager.load();
 }
-
-
 var createFirstScene = function () {
+
     var scene = new BABYLON.Scene(engine);
     scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
     var ground = CreateGround(scene);
     var tank = createTank(scene);
-    var portal = createPortal(scene,tank);
+    var portal = createPortal(scene, tank);
     scene.followCameraTank = createFollowCamera(scene, tank);
-    scene.followCameraTank.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
+    scene.followCameraTank.viewport = new BABYLON.Viewport(
+        0, 0, .5, 1);
     scene.activeCamera = scene.followCameraTank;
     createLights(scene);
     createHeroDude(scene);
     loadSounds(scene);
-    
     return scene;
 };
 
 var createSecondScene = function () {
+
     var scene = new BABYLON.Scene(engine);
     scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
@@ -388,33 +387,31 @@ var createSecondScene = function () {
     var tank = createTank(scene);
     var portal = createPortal(scene,tank);
     scene.followCameraTank = createFollowCamera(scene, tank);
-    scene.followCameraTank.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
+    scene.followCameraTank.viewport = new BABYLON.Viewport(
+        0, 0, .5, 1);
     scene.activeCamera = scene.followCameraTank;
     createLights(scene);
     createHeroDude(scene);
     loadSounds(scene);
-    
     return scene;
 };
-
 function CreateGround(scene) {
-    var ground = new BABYLON.Mesh.CreateGroundFromHeightMap("ground","images/hmap1.png", 2000,2000,20,0,1000,scene,false,OnGroundCreated);
+    var ground = new BABYLON.Mesh.CreateGroundFromHeightMap("ground","images/hmap1.png", 2000, 2000, 20, 0, 1000, scene, false, OnGroundCreated);
     console.log(ground);
     function OnGroundCreated()
     {
         var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg", scene);
-        if(Game.activeScene%3 == 0)
-        {
+        if(Game.activeScene%3 == 0) {
             groundMaterial.diffuseColor = new BABYLON.Color3.Red;
         }
-        else if(Game.activeScene%3 == 1)
-        {
+        else if(Game.activeScene%3 == 1) {
             groundMaterial.diffuseColor = new BABYLON.Color3.Blue;
         }
         else if(Game.activeScene%3 == 2) {
             groundMaterial.diffuseColor = new BABYLON.Color3.Green;
         }
+
         ground.material = groundMaterial;
         ground.checkCollisions = true;
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground,
@@ -430,7 +427,7 @@ function createLights(scene){
 
 function createPortal(scene, hero)
 {
-    var portal = new BABYLON.Mesh.CreateCylinder("portal", 100, 100, 100,24,1,scene);
+    var portal = new BABYLON.Mesh.CreateCylinder("portal", 100, 100, 100, 24, 1, scene);
     portal.position.y += 50;
     portal.position.x += 200;
     portal.position.z += 200;
@@ -440,6 +437,7 @@ function createPortal(scene, hero)
     material.emissiveColor = new BABYLON.Color3.Yellow;
 
     portal.material = material;
+
     portal.actionManager = new BABYLON.ActionManager(scene);
 
     portal.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
@@ -448,11 +446,12 @@ function createPortal(scene, hero)
             parameter: hero
         },
         function () {
+
             engine.stopRenderLoop();
             Game.activeScene = Game.activeScene + 1;
             startSecondScene();
         }
-    ))
+    ));
     
 }
 
