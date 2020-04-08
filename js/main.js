@@ -160,7 +160,7 @@ class Dude {
             return false;
         });
 
-        if(!pickInfo.pickedPoint) return 0;
+        if(!pickInfo.pickedPoint) return 0; //last change here
         var groundHeight = pickInfo.pickedPoint.y;
         this.dudeMesh.position.y = groundHeight;
         this.bounder.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY / 2.0;
@@ -337,7 +337,6 @@ function startFirstScene()
         tank.fireLaserBeams(scene);
         moveHeroDude(scene);
         moveOtherDudes(scene);
-
         scene.render();
     }
 
@@ -500,7 +499,7 @@ function configureAssetsManager(scene)
     scene.assets = {};
     var assetsManager = new BABYLON.AssetsManager(scene);
     assetsManager.onProgress = function (remainingCount, totalCount, lastFinishedTask) {
-        engine.loadingUIText = "We are loading the scene. " + remainingCount + " out of " + " items still need to be loaded.";
+        engine.loadingUIText = "We are loading the scene. " + remainingCount + " out of " + totalCount + " items still need to be loaded.";
     };
 
     assetsManager.onFinish = function (tasks) {
