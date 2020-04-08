@@ -294,7 +294,11 @@ class Dude {
 
 function startGame() {
     canvas = document.getElementById("renderCanvas");
+    canvas.style.width = "800px";
+    canvas.style.height = "600px";
     engine = new BABYLON.Engine(canvas, true);
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
     scene = createScene();
     modifySettings();
     var tank = scene.getMeshByName("heroTank");
@@ -364,6 +368,19 @@ function loadSounds(scene)
         scene.assets["dieSound"] = new BABYLON.Sound("die", task.data, scene, null, { loop: false });
     }
 
+}
+
+function loadCrossHair(scene){
+    var impact = new BABYLON.Mesh.CreateBox("impact", .01, scene);
+    impact.parent = scene.freeCameraDude;
+
+    scene.freeCameraDude.minZ = .1;
+    impact.position.z += .2;
+
+    impact.material = new BABYLON.StandardMaterial("impact", scene);
+    impact.material.diffuseTexture = new BABYLON.Texture("images/gunaims.png",scene);
+    impact.material.diffuseTexture.hasAlpha = true;
+    impact.isPickable = false;
 }
 
 function configureAssetsManager(scene)
@@ -592,6 +609,7 @@ function createHeroDude(scene)
                 heroDude.position.y + Dude.boundingBoxParameters.lengthY + .2,
                 heroDude.position.z);
             scene.freeCameraDude = createFreeCamera(scene,freeCamPosition);
+            loadCrossHair(scene);
             scene.dudes = [];
             scene.dudes[0] = heroDude;
             for ( var q = 1; q <= 10; q++) {
@@ -695,7 +713,11 @@ function moveOtherDudes()
 }
 
 window.addEventListener("resize", function () {
+    canvas.style.width = "800px";
+    canvas.style.height = "600px";
     engine.resize();
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
 });
 
 function modifySettings() {
