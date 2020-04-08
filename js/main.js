@@ -599,7 +599,7 @@ function animateArcRotateCamera(scene, camera)
 }
 
 function createTank(scene) {
-    var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
+    var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6 }, scene);
     var tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
     tankMaterial.diffuseColor = new BABYLON.Color3.Red;
     tankMaterial.emissiveColor = new BABYLON.Color3.Blue;
@@ -610,16 +610,16 @@ function createTank(scene) {
     tank.canFireCannonBalls = true;
     tank.canFireLaser = true;
     //tank.isPickable = false;
+
     tank.move = function(scene) {
         scene.activeCamera = scene.activeCameras[0];
 
-        if(scene.activeCamera != scene.followCameraTank)
-        {
+        if(scene.activeCamera != scene.followCameraTank) {
             return;
         }
         var yMovement = 0;
         if (tank.position.y > 2) {
-            yMovement = -2;
+            tank.moveWithCollisions(new BABYLON.Vector3(0, -2, 0));
         }
         if (isWPressed) {
             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed,tank.speed));
@@ -639,8 +639,7 @@ function createTank(scene) {
     }
 
     
-    tank.fireCannonBalls = function(scene)
-    {
+    tank.fireCannonBalls = function(scene) {
         var tank = this;
         //console.log("firing dangit");
         if(!isBPressed) return;
@@ -673,18 +672,17 @@ function createTank(scene) {
         cannonBall.actionManager = new BABYLON.ActionManager(scene);
         
         scene.dudes.forEach(function(dude){
-
             cannonBall.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 {
                     trigger : BABYLON.ActionManager.OnIntersectionEnterTrigger,
                     parameter: dude.Dude.bounder
                 },
                 function () {
-                    console.log("hit!");
+                    
                     if(dude.Dude.bounder._isDisposed) return;
                     dude.Dude.gotKilled();
                 }
-            ))
+            ));
 
 
         });
@@ -709,6 +707,7 @@ function createTank(scene) {
         scene.assets["laserSound"].play();
         var origin = tank.position;
         var direction = new BABYLON.Vector3(tank.frontVector.x, tank.frontVector.y + .1, tank.frontVector.z);
+        
         var ray = new BABYLON.Ray(origin, direction,1000);
         var rayHelper = new BABYLON.RayHelper(ray);
         rayHelper.show(scene, new BABYLON.Color3.Red);
@@ -720,7 +719,8 @@ function createTank(scene) {
         var pickInfos = scene.multiPickWithRay(ray, function (mesh) {
             if(mesh.name == "heroTank") return false;
             return true;
-        });
+        }
+        );
 
         for ( var i = 0; i < pickInfos.length; i++){
             var pickInfo = pickInfos[i];
@@ -728,14 +728,13 @@ function createTank(scene) {
                 if(pickInfo.pickedMesh.name.startsWith("bounder")) {
 
                     pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
-                } else if (pickInfo.pickedMesh.name.startsWith("clone")) {
+                }
+                
+                else if (pickInfo.pickedMesh.name.startsWith("clone")) {
                     pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
-
-
             }
         }
-
     }
 
     return tank;
@@ -744,7 +743,7 @@ function createTank(scene) {
 function createHeroDude(scene)
 {
     //BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported); // I'm not supposed to need this line but I do need it... end of vid31
-    var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude/", "dude.babylon");
+    var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude/", "Dude.babylon");
 
     meshTask.onSuccess = function (task) {
         
