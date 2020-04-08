@@ -4,22 +4,23 @@ var engine;
 var Game = {};
 Game.scenes = [];
 Game.activeScene = 0;
+
 var isWPressed = false;
 var isSPressed = false;
 var isAPressed = false;
 var isEPressed = false;
 var isBPressed = false;
 var isRPressed = false;
+
 document.addEventListener("DOMContentLoaded", startGame);
 
 class Dude {
-    constructor(dudeMesh,speed, id, scene, scaling)
-    {
+    constructor(dudeMesh, speed, id, scene, scaling) {
         this.dudeMesh = dudeMesh;
         this.id = id;
         this.scene = scene;
         this.health = 3;
-        this.frontVector = new BABYLON.Vector3(0,0, -1);
+        this.frontVector = new BABYLON.Vector3(0, 0, -1);
         dudeMesh.Dude = this;
 
         if (speed) {
@@ -51,7 +52,7 @@ class Dude {
         var scene = this.scene;
         if (!this.bounder) return;
         this.dudeMesh.position = new BABYLON.Vector3(this.bounder.position.x,
-            this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+            this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY / 2.0, this.bounder.position.z);
         var tank = scene.getMeshByName("heroTank");
         var direction = tank.position.subtract(this.dudeMesh.position);
         var distance = direction.length(); //don't let dude get to tank?
