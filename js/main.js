@@ -130,6 +130,25 @@ class Dude {
 
     }
 
+    fireGun()
+    {
+        var scene = this.scene;
+        scene.assets["gunSound"].play();
+        var width = scene.getEngine().getRenderWidth();
+        var height = scene.getEngine().getRenderHeight();
+        var pickInfo = scene.pick(width/2, height/2);
+
+        if (pickInfo.pickedMesh){
+            if(pickInfo.pickedMesh.name.startsWith("bounder")) {
+                pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
+            } else if (pickInfo.pickedMesh.name.startsWith("clone")) {
+                pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
+            }
+        }
+
+
+    }
+
     adjustYPosition()
     {
         var origin = new BABYLON.Vector3(this.dudeMesh.position.x, 1000, this.dudeMesh.position.z);
@@ -366,6 +385,11 @@ function loadSounds(scene)
     binaryTask = assetsManager.addBinaryFileTask("dieSound", "sounds/die.wav");
     binaryTask.onSuccess = function (task) {
         scene.assets["dieSound"] = new BABYLON.Sound("die", task.data, scene, null, { loop: false });
+    }
+
+    binaryTask = assetsManager.addBinaryFileTask("gunSound", "sounds/shot.wav");
+    binaryTask.onSuccess = function (task) {
+        scene.assets["gunSound"] = new BABYLON.Sound("gun", task.data, scene, null, { loop: false });
     }
 
 }
@@ -732,6 +756,11 @@ function modifySettings() {
             
             //canvas.requestPointerLock(); // allows aiming via pointer
         } else {
+            if(scene.activeCamera == scene.freeCameraDude)
+            {
+                var heroDude = scene.dudes[0];
+                heroDude.Dude.fireGun();
+            }
             console.log("not requesting because we ar ealready locked");
         }
        
