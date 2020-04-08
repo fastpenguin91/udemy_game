@@ -473,6 +473,36 @@ function createArcRotateCamera(scene, target)
     return camera;
 }
 
+function animateArcRotateCamera(camera)
+{
+    var alphaAnimation = new BABYLON.Animation("alphaAnimation", "alpha", 10,
+    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    var betaAnimation = new BABYLON.Animation("betaAnimation", "beta", 10,
+    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    var radiusAnimation = new BABYLON.Animation("radiusAnimation", "radius",10,
+    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+
+    var alphaKeys = [];
+    alphaKeys.push({frame:0, value:0});
+    alphaKeys.push({frame:50, value: Math.PI});
+    alphaKeys.push({frame:100, value: 2*Math.PI});
+    alphaAnimation.setKeys(alphaKeys);
+
+    var betaKeys = [];
+    betaKeys.push({frame:0, value:0});
+    betaKeys.push({frame:50, value: Math.PI});
+    betaKeys.push({frame:100, value: 2*Math.PI});
+    betaAnimation.setKeys(betaKeys);
+
+    var radiusKeys = [];
+    radiusKeys.push({frame:0, value: 20});
+    radiusKeys.push({frame:50, value: 100});
+    radiusKeys.push({frame:100, value: 20});
+    radiusAnimation.setKeys(radiusKeys);
+
+}
+
 function createTank(scene)
 {
     var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
