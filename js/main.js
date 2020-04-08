@@ -662,6 +662,13 @@ function createHeroDude(scene)
             scene.arcRotateCamera = createArcRotateCamera(scene, scene.dudes[1]);
             scene.arcRotateCamera.viewport = new BABYLON.Viewport(.5, 0, .5, 1);
             scene.activeCameras.push(scene.arcRotateCamera);
+
+            scene.freeCameraDude.layerMask = 1;
+            var len = heroDude.getChildren().length;
+            for (var i = 0; i < len; i++)
+            {
+                heroDude.getChildren()[i].layerMask = 2;
+            }
             
         }
 
