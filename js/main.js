@@ -160,7 +160,7 @@ class Dude {
             return false;
         });
 
-        if(!pickInfo.pickedPoint) return 0; //last change here
+        if(!pickInfo.pickedPoint) return 0;
         var groundHeight = pickInfo.pickedPoint.y;
         this.dudeMesh.position.y = groundHeight;
         this.bounder.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY / 2.0;
@@ -180,7 +180,7 @@ class Dude {
         var lengthX = Dude.boundingBoxParameters.lengthX;
         var lengthY = Dude.boundingBoxParameters.lengthY;
         var lengthZ = Dude.boundingBoxParameters.lengthZ;
-
+        new BABYLON.Quaternion
         var bounder = new BABYLON.Mesh.CreateBox("bounder" + (this.id).toString(), 1, this.scene);
 
         bounder.scaling.x = lengthX * this.scaling;
@@ -194,15 +194,15 @@ class Dude {
         bounder.material = bounderMaterial;
         bounder.checkCollisions = true;
 
-        bounder.position = new BABYLON.Vector3(this.dudeMesh.position.x, this.dudeMesh.position.y + this.scaling * lengthY/2, this.dudeMesh.position.z);
+        bounder.position = new BABYLON.Vector3(this.dudeMesh.position.x, this.dudeMesh.position.y
+            + this.scaling * lengthY / 2, this.dudeMesh.position.z);
 
 
         return bounder;
 
     }
 
-    calculateBoundingBoxParameters()
-    {
+    calculateBoundingBoxParameters() {
         var minX = 999999; var minY = 999999; var minZ = 999999;
         var maxX = -99999; var maxY = -99999; var maxZ = -99999;
 
