@@ -473,10 +473,10 @@ function createArcRotateCamera(scene, target)
     return camera;
 }
 
-function animateArcRotateCamera(camera)
+function animateArcRotateCamera(scene, camera)
 {
-    var alphaAnimation = new BABYLON.Animation("alphaAnimation", "alpha", 10,
-    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    var alphaAnimation = new BABYLON.Animation("alphaAnimation", "alpha", 30,
+    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
     var betaAnimation = new BABYLON.Animation("betaAnimation", "beta", 10,
     BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
     var radiusAnimation = new BABYLON.Animation("radiusAnimation", "radius",10,
@@ -485,14 +485,14 @@ function animateArcRotateCamera(camera)
 
     var alphaKeys = [];
     alphaKeys.push({frame:0, value:0});
-    alphaKeys.push({frame:50, value: Math.PI});
-    alphaKeys.push({frame:100, value: 2*Math.PI});
+    alphaKeys.push({frame:50, value: Math.PI/2});
+    alphaKeys.push({frame:100, value: Math.PI});
     alphaAnimation.setKeys(alphaKeys);
 
     var betaKeys = [];
-    betaKeys.push({frame:0, value:0});
-    betaKeys.push({frame:50, value: Math.PI});
-    betaKeys.push({frame:100, value: 2*Math.PI});
+    betaKeys.push({frame:0, value: Math.PI/4});
+    betaKeys.push({frame:50, value: Math.PI/2 });
+    betaKeys.push({frame:100, value: Math.PI/4 });
     betaAnimation.setKeys(betaKeys);
 
     var radiusKeys = [];
@@ -500,6 +500,13 @@ function animateArcRotateCamera(camera)
     radiusKeys.push({frame:50, value: 100});
     radiusKeys.push({frame:100, value: 20});
     radiusAnimation.setKeys(radiusKeys);
+
+    camera.animations = [];
+    camera.animations.push(alphaAnimation);
+    //camera.animations.push(betaAnimation);
+    //camera.animations.push(radiusAnimation);
+
+    scene.beginAnimation(camera, 0, 100, false);
 
 }
 
@@ -692,7 +699,7 @@ function createHeroDude(scene)
             scene.arcRotateCamera = createArcRotateCamera(scene, scene.dudes[1]);
             scene.arcRotateCamera.viewport = new BABYLON.Viewport(.5, 0, .5, 1);
             scene.activeCameras.push(scene.arcRotateCamera);
-
+            animateArcRotateCamera(scene, scene.arcRotateCamera);
             scene.freeCameraDude.layerMask = 1;
             var len = heroDude.getChildren().length;
             for (var i = 0; i < len; i++)
