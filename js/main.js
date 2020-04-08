@@ -36,7 +36,9 @@ class Dude {
         if(Dude.boundingBoxParameters == undefined) {
             Dude.boundingBoxParameters = this.calculateBoundingBoxParameters();
         }
-        if (Dude.particleSystem == undefined) {
+        Dude.activeScenes = {};
+        if (Dude.particleSystem == undefined || Dude.activeScenes[Game.activeScene] == undefined) {
+            Dude.activeScenes[Game.activeScene] = true;
             Dude.particleSystem = this.createDudeParticleSystem();
         }
 
@@ -349,12 +351,50 @@ function startFirstScene()
     scene.assetsManager.load();
 }
 
+function startSecondScene()
+{
+    Game.scenes[Game.activeScene] = createSecondScene();
+    var scene = Game.scenes[Game.activeScene];
+    modifySettings(scene);
+    var tank = scene.getMeshByName("heroTank");
+    scene.toRender = function () {
+        tank.move(scene);
+        tank.fireCannonBalls(scene);
+        tank.fireLaserBeams(scene);
+        moveHeroDude(scene);
+        moveOtherDudes(scene);
+
+        scene.render();
+    }
+
+    scene.assetsManager.load();
+}
+
+
 var createFirstScene = function () {
     var scene = new BABYLON.Scene(engine);
     scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
     var ground = CreateGround(scene);
     var tank = createTank(scene);
+    var portal = createPortal(scene,tank);
+    scene.followCameraTank = createFollowCamera(scene, tank);
+    scene.followCameraTank.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
+    scene.activeCamera = scene.followCameraTank;
+    createLights(scene);
+    createHeroDude(scene);
+    loadSounds(scene);
+    
+    return scene;
+};
+
+var createSecondScene = function () {
+    var scene = new BABYLON.Scene(engine);
+    scene.assetsManager = configureAssetsManager(scene);
+    scene.enablePhysics();
+    var ground = CreateGround(scene);
+    var tank = createTank(scene);
+    var portal = createPortal(scene,tank);
     scene.followCameraTank = createFollowCamera(scene, tank);
     scene.followCameraTank.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
     scene.activeCamera = scene.followCameraTank;
@@ -372,6 +412,17 @@ function CreateGround(scene) {
     {
         var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg", scene);
+        if(Game.activeScene%3 == 0)
+        {
+            groundMaterial.diffuseColor = new BABYLON.Color3.Red;
+        }
+        else if(Game.activeScene%3 == 1)
+        {
+            groundMaterial.diffuseColor = new BABYLON.Color3.Blue;
+        }
+        else if(Game.activeScene%3 == 2) {
+            groundMaterial.diffuseColor = new BABYLON.Color3.Green;
+        }
         ground.material = groundMaterial;
         ground.checkCollisions = true;
         ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground,
@@ -383,6 +434,34 @@ function CreateGround(scene) {
 function createLights(scene){
     var light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-.1, -1, 0), scene);
     var light1 = new BABYLON.DirectionalLight("dir1", new BABYLON.Vector3(-1, -1, 0), scene);
+}
+
+function createPortal(scene, hero)
+{
+    var portal = new BABYLON.Mesh.CreateCylinder("portal", 100, 100, 100,24,1,scene);
+    portal.position.y += 50;
+    portal.position.x += 200;
+    portal.position.z += 200;
+
+    var material = new BABYLON.StandardMaterial("portalmaterial", scene);
+    material.diffuseTexture = new BABYLON.Texture("images/lightning.jfif",scene);
+    material.emissiveColor = new BABYLON.Color3.Yellow;
+
+    portal.material = material;
+    portal.actionManager = new BABYLON.ActionManager(scene);
+
+    portal.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+        {
+            trigger : BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: hero
+        },
+        function () {
+            engine.stopRenderLoop();
+            Game.activeScene = Game.activeScene + 1;
+            startSecondScene();
+        }
+    ))
+    
 }
 
 function loadSounds(scene)
@@ -432,6 +511,10 @@ function configureAssetsManager(scene)
     };
 
     assetsManager.onFinish = function (tasks) {
+        if(Game.activeScene > 0)
+        {
+            Game.scenes[Game.activeScene -1].dispose();
+        }
         engine.runRenderLoop(function () {
             scene.toRender();
         });
