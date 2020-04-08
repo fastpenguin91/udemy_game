@@ -452,11 +452,12 @@ function createPortal(scene, hero)
             startSecondScene();
         }
     ));
+
+
     
 }
 
-function loadSounds(scene)
-{
+function loadSounds(scene) {
     var assetsManager = scene.assetsManager;
     var binaryTask = assetsManager.addBinaryFileTask("laserSound", "sounds/laser.wav");
     binaryTask.onSuccess = function (task) {
@@ -480,21 +481,23 @@ function loadSounds(scene)
 
 }
 
-function loadCrosshair(scene){
+function loadCrosshair(scene)
+{
     var impact = new BABYLON.Mesh.CreateBox("impact", .01, scene);
     impact.parent = scene.freeCameraDude;
 
     scene.freeCameraDude.minZ = .1;
     impact.position.z += .2;
-
     impact.material = new BABYLON.StandardMaterial("impact", scene);
-    impact.material.diffuseTexture = new BABYLON.Texture("images/gunaims.png",scene);
+    impact.material.diffuseTexture = new BABYLON.Texture("images/gunaims.png", scene);
     impact.material.diffuseTexture.hasAlpha = true;
     impact.isPickable = false;
+
+
+
 }
 
-function configureAssetsManager(scene)
-{
+function configureAssetsManager(scene) {
     scene.assets = {};
     var assetsManager = new BABYLON.AssetsManager(scene);
     assetsManager.onProgress = function (remainingCount, totalCount, lastFinishedTask) {
@@ -515,9 +518,8 @@ function configureAssetsManager(scene)
 }
 
 
-function createFreeCamera(scene, initialPosition)
-{
-    var camera = new BABYLON.FreeCamera("freeCamera", initialPosition,scene);
+function createFreeCamera(scene, initialPosition) {
+    var camera = new BABYLON.FreeCamera("freeCamera", initialPosition, scene);
     camera.attachControl(canvas);
     camera.checkCollisions = true;
     camera.applyGravity = true; // prevents camera from flying.
@@ -534,29 +536,28 @@ function createFreeCamera(scene, initialPosition)
     return camera;
 }
 
-function createFollowCamera(scene,target)
-{
+function createFollowCamera(scene, target) {
+
     var camera = new BABYLON.FollowCamera(target.name + "FollowCamera", target.position, scene, target);
-    if(target.name == "heroDude")
-    {   
+    if(target.name == "heroDude") {   
         camera.radius = 40; //how far from object to follow
         camera.heightOffset = 10; // how high above object to place camera
         camera.rotationOffset = 0; // viewing angle
-    } else {
+    }
+    else {
         camera.radius = 20;
         camera.heightOffset = 4; // how high above object to place camera
         camera.rotationOffset = 180; // viewing angle
     }
     
-    camera.cameraAcceleration = 0.5; // ow fast to move
-    camera.maxCameraSpeed = 50; // speed limit
+    camera.cameraAcceleration = 0.1; // how fast to move
+    camera.maxCameraSpeed = 5; // speed limit
     return camera;
 }
 
 function createArcRotateCamera(scene, target)
 {
     var camera = new BABYLON.ArcRotateCamera("arc", 0, 1, 50, target);
-
     return camera;
 }
 
@@ -566,8 +567,8 @@ function animateArcRotateCamera(scene, camera)
     BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_RELATIVE);
     var betaAnimation = new BABYLON.Animation("betaAnimation", "beta", 10,
     BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-    var radiusAnimation = new BABYLON.Animation("radiusAnimation", "radius",10,
-    BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    var radiusAnimation = new BABYLON.Animation("radiusAnimation", "radius",10
+    , BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
 
     var alphaKeys = [];
@@ -590,15 +591,14 @@ function animateArcRotateCamera(scene, camera)
 
     camera.animations = [];
     camera.animations.push(alphaAnimation);
-    //camera.animations.push(betaAnimation);
-    //camera.animations.push(radiusAnimation);
+    camera.animations.push(betaAnimation);
+    camera.animations.push(radiusAnimation);
 
-    scene.beginAnimation(camera, 0, 100, false);
+    scene.beginAnimation(camera, 0, 100, true);
 
 }
 
-function createTank(scene)
-{
+function createTank(scene) {
     var tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height: 1, depth: 6, width:6}, scene);
     var tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
     tankMaterial.diffuseColor = new BABYLON.Color3.Red;
