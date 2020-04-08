@@ -61,7 +61,7 @@ class Dude {
     }
 
     moveFPS() {
-        if(scene.activeCamera != scene.followCameraDude)
+        if(scene.activeCamera != scene.followCameraDude && scene.activeCamera != scene.freeCameraDude)
         {
             this.dudeMesh.animatableObject.pause();
             return;
@@ -75,32 +75,57 @@ class Dude {
             this.dudeMesh.animatableObject.pause();
         }
 
-        if (!this.bounder) return;
-
-        this.adjustYPosition();
-        this.adjustXZPosition();
-
-        var direction = this.frontVector;
-        var dir = direction.normalize();
-        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
-        this.dudeMesh.rotation.y = alpha;
-        if(isWPressed) {
-            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
-        }
-        if(isSPressed) {
-            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
-        }
-        if(isEPressed)
+        if(scene.activeCamera == scene.followCameraDude)
         {
-            var alpha = this.dudeMesh.rotation.y;
-            alpha+= .1;
-            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+
+            if (!this.bounder) return;
+
+            this.adjustYPosition();
+            this.adjustXZPosition();
+
+            var direction = this.frontVector;
+            var dir = direction.normalize();
+            var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+            this.dudeMesh.rotation.y = alpha;
+           if(isWPressed) {
+                this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+            }
+            if(isSPressed) {
+                this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+            }
+            if(isEPressed)
+            {
+                var alpha = this.dudeMesh.rotation.y;
+                alpha+= .1;
+                this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+            }
+            if(isAPressed)
+            {
+                var alpha = this.dudeMesh.rotation.y;
+                alpha -= .1;
+                this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+            }
+
+            scene.freeCameraDude.position.x = this.bounder.position.x;
+            scene.freeCameraDude.position.z = this.bounder.position.z;
+            scene.freeCameraDude.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY + .2;
+            scene.freeCameraDude.setTarget(scene.freeCameraDude.position.add(this.frontVector));
         }
-        if(isAPressed)
+
+        else if (scene.activeCamera == scene.freeCameraDude)
         {
-            var alpha = this.dudeMesh.rotation.y;
-            alpha -= .1;
-            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+            var groundHeight = this.adjustYPosition();
+            this.adjustXZPosition();
+            scene.freeCameraDude.position.y = groundHeight + this.scaling * Dude.boundingBoxParameters.lengthY + .2;
+            var cameraFront = scene.freeCameraDude.getTarget().subtract(scene.freeCameraDude.position).normalize();
+            this.frontVector = cameraFront;
+            var dir = this.frontVector;
+            var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+            this.dudeMesh.rotation.y = alpha;
+
+            this.bounder.position.x = scene.freeCameraDude.position.x;
+            this.bounder.position.z = scene.freeCameraDude.position.z;
+
         }
 
     }
@@ -291,7 +316,6 @@ var createScene = function () {
     scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
     var ground = CreateGround(scene);
-    var freeCamera = createFreeCamera(scene);
     var tank = createTank(scene);
     scene.followCameraTank = createFollowCamera(scene, tank);
     scene.activeCamera = scene.followCameraTank;
@@ -360,13 +384,13 @@ function configureAssetsManager(scene)
 }
 
 
-function createFreeCamera(scene)
+function createFreeCamera(scene, initialPosition)
 {
-    var camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0,0,0),scene);
+    var camera = new BABYLON.FreeCamera("freeCamera", initialPosition,scene);
     camera.attachControl(canvas);
-    camera.position.y = 500;
     camera.checkCollisions = true;
     camera.applyGravity = true; // prevents camera from flying.
+    camera.ellipsoid = new BABYLON.Vector3(.1, .1, .1);
     camera.keysUp.push('w'.charCodeAt(0));
     camera.keysUp.push('W'.charCodeAt(0));
     camera.keysDown.push('s'.charCodeAt(0));
@@ -564,7 +588,10 @@ function createHeroDude(scene)
             heroDude.animatableObject = scene.beginAnimation(skeletons[0],0,120,true,1.0);
             var hero = new Dude(heroDude, 2, -1, scene,.2);
             scene.followCameraDude = createFollowCamera(scene, heroDude);
-    
+            var freeCamPosition = new BABYLON.Vector3(heroDude.position.x,
+                heroDude.position.y + Dude.boundingBoxParameters.lengthY + .2,
+                heroDude.position.z);
+            scene.freeCameraDude = createFreeCamera(scene,freeCamPosition);
             scene.dudes = [];
             scene.dudes[0] = heroDude;
             for ( var q = 1; q <= 10; q++) {
@@ -743,6 +770,10 @@ document.addEventListener("keydown", function(event)
     if(event.key == 'y' || event.key == 'Y')
     {
         scene.activeCamera = scene.followCameraDude;
+    }
+    if(event.key == 'u' || event.key == 'U')
+    {
+        scene.activeCamera = scene.freeCameraDude;
     }
 });
 
