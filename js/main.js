@@ -1,7 +1,9 @@
 // your code here
 var canvas;
 var engine;
-var scene;
+var Game = {};
+Game.scenes = [];
+Game.activeScene = 0;
 var isWPressed = false;
 var isSPressed = false;
 var isAPressed = false;
@@ -44,7 +46,7 @@ class Dude {
 
     followTank()
     {
-
+        var scene = this.scene;
         if (!this.bounder) return;
         this.dudeMesh.position = new BABYLON.Vector3(this.bounder.position.x,
             this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
@@ -61,6 +63,7 @@ class Dude {
     }
 
     moveFPS() {
+        var scene = this.scene;
         scene.activeCamera = scene.activeCameras[0];
         if(scene.activeCamera != scene.followCameraDude && scene.activeCamera != scene.freeCameraDude)
         {
@@ -133,7 +136,7 @@ class Dude {
 
     fireGun()
     {
-        //var scene = this.scene;
+        var scene = this.scene;
         scene.assets["gunSound"].play();
         var width = scene.getEngine().getRenderWidth();
         var height = scene.getEngine().getRenderHeight();
@@ -152,6 +155,7 @@ class Dude {
 
     adjustYPosition()
     {
+        var scene = this.scene;
         var origin = new BABYLON.Vector3(this.dudeMesh.position.x, 1000, this.dudeMesh.position.z);
         var direction = new BABYLON.Vector3(0, -1, 0);
         var ray = new BABYLON.Ray(origin, direction, 10000);
@@ -177,6 +181,7 @@ class Dude {
 
     createBoundingBox()
     {
+        var scene = this.scene;
         var lengthX = Dude.boundingBoxParameters.lengthX;
         var lengthY = Dude.boundingBoxParameters.lengthY;
         var lengthZ = Dude.boundingBoxParameters.lengthZ;
@@ -246,6 +251,7 @@ class Dude {
 
     createDudeParticleSystem = function()
     {
+        var scene = this.scene;
         // create a particle system
         var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
 
@@ -290,6 +296,7 @@ class Dude {
     }
 
     gotKilled() {
+        var scene = this.scene;
         scene.assets["dieSound"].play();
         Dude.particleSystem.emitter = this.bounder.position;
         Dude.particleSystem.emitRate = 2000;
@@ -320,15 +327,21 @@ function startGame() {
     engine = new BABYLON.Engine(canvas, true);
     canvas.style.width = "100%";
     canvas.style.height = "100%";
-    scene = createScene();
-    modifySettings();
+    startFirstScene();
+}
+
+function startFirstScene()
+{
+    Game.scenes[Game.activeScene] = createFirstScene();
+    var scene = Game.scenes[Game.activeScene];
+    modifySettings(scene);
     var tank = scene.getMeshByName("heroTank");
     scene.toRender = function () {
-        tank.move();
-        tank.fireCannonBalls();
-        tank.fireLaserBeams();
-        moveHeroDude();
-        moveOtherDudes();
+        tank.move(scene);
+        tank.fireCannonBalls(scene);
+        tank.fireLaserBeams(scene);
+        moveHeroDude(scene);
+        moveOtherDudes(scene);
 
         scene.render();
     }
@@ -336,7 +349,7 @@ function startGame() {
     scene.assetsManager.load();
 }
 
-var createScene = function () {
+var createFirstScene = function () {
     var scene = new BABYLON.Scene(engine);
     scene.assetsManager = configureAssetsManager(scene);
     scene.enablePhysics();
@@ -523,7 +536,7 @@ function createTank(scene)
     tank.canFireCannonBalls = true;
     tank.canFireLaser = true;
     //tank.isPickable = false;
-    tank.move = function() {
+    tank.move = function(scene) {
         scene.activeCamera = scene.activeCameras[0];
 
         if(scene.activeCamera != scene.followCameraTank)
@@ -552,7 +565,7 @@ function createTank(scene)
     }
 
     
-    tank.fireCannonBalls = function()
+    tank.fireCannonBalls = function(scene)
     {
         var tank = this;
         //console.log("firing dangit");
@@ -608,7 +621,7 @@ function createTank(scene)
 
     }
 
-    tank.fireLaserBeams = function()
+    tank.fireLaserBeams = function(scene)
     {
         var tank = this;
         if (!isRPressed) return;
@@ -784,14 +797,14 @@ function DoClone(original, skeletons, id) {
 
 }
 
-function moveHeroDude() {
+function moveHeroDude(scene) {
     var heroDude = scene.getMeshByName("heroDude");
     if(heroDude) {
         heroDude.Dude.moveFPS();
     }
 }
 
-function moveOtherDudes()
+function moveOtherDudes(scene)
 {
     if(scene.dudes) {
         for(var q = 1; q< scene.dudes.length; q++) {
@@ -809,7 +822,7 @@ window.addEventListener("resize", function () {
     canvas.style.height = "100%";
 });
 
-function modifySettings() {
+function modifySettings(scene) {
 
     scene.onPointerDown = function()
     {
@@ -839,6 +852,7 @@ function modifySettings() {
 
     function pointerLockListener()
     {
+        var scene = Game.scenes[Game.activeScene];
         var element = document.pointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement || document.pointerLockElement || null;
 
         if (element){
@@ -854,6 +868,7 @@ function modifySettings() {
 
 document.addEventListener("keydown", function(event)
 {
+    var scene = Game.scenes[Game.activeScene];
     if(event.key == 'w' || event.key == 'W')
     {
         isWPressed = true;
@@ -896,6 +911,7 @@ document.addEventListener("keydown", function(event)
 
 document.addEventListener("keyup", function(event)
 {
+    var scene = Game.scenes[Game.activeScene];
     if(event.key == 'w' || event.key == 'W')
     {
         isWPressed = false;
