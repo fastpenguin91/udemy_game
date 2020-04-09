@@ -32,12 +32,19 @@ var createScene = function () {
     createLights(scene);
 
     BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene, onDudeImported);
+    
     function onDudeImported(newMeshes, particleSystems, skeletons) {
         newMeshes[0].position = new BABYLON.Vector3(0,0,5); // the original dude
         console.log(skeletons.length);
         //scene.beginAnimation(skeletons[0], 0, 120, 1.0, true);
         scene.beginAnimation(skeletons[0],0,120,true,1.0);
     }
+
+    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,0,100);
+        scene.beginAnimation(skeletons[0],0,70,true,2.0);
+        
+    });
 
 
     return scene;
