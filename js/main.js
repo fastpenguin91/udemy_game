@@ -779,7 +779,7 @@ function createHeroDude(scene)
                 scene.dudes[q] = DoClone(heroDude, skeletons, q);
                 scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
                 //console.log(scene.dudes);
-                var temp = new Dude(scene.dudes[q], 0.5, q, scene, .2);
+                var temp = new Dude(scene.dudes[q], Math.random().toFixed(2), q, scene, .2);
     
             }
 
