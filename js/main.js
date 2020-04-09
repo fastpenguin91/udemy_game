@@ -161,19 +161,19 @@ function modifySettings() {
 
 document.addEventListener("keydown", function(event)
 {
-    if(event.key == 'w' || event.key == 'W')
+    if(event.key == 'w' || event.key == 'W' || event.key == 'ArrowUp')
     {
         isWPressed = true;
     }
-    if(event.key == 's' || event.key == 'S')
+    if(event.key == 's' || event.key == 'S' || event.key == 'ArrowDown')
     {
         isSPressed = true;
     }
-    if(event.key == 'a' || event.key == 'A')
+    if(event.key == 'a' || event.key == 'A' || event.key == 'ArrowLeft' )
     {
         isAPressed = true;
     }
-    if(event.key == 'e' || event.key == 'E')
+    if(event.key == 'e' || event.key == 'E' || event.key == 'ArrowRight')
     {
         isEPressed = true;
     }
@@ -181,19 +181,19 @@ document.addEventListener("keydown", function(event)
 
 document.addEventListener("keyup", function(event)
 {
-    if(event.key == 'w' || event.key == 'W')
+    if(event.key == 'w' || event.key == 'W' || event.key == 'ArrowUp')
     {
         isWPressed = false;
     }
-    if(event.key == 's' || event.key == 'S')
+    if(event.key == 's' || event.key == 'S' || event.key == 'ArrowDown')
     {
         isSPressed = false;
     }
-    if(event.key == 'a' || event.key == 'A')
+    if(event.key == 'a' || event.key == 'A' || event.key == 'ArrowLeft')
     {
         isAPressed = false;
     }
-    if(event.key == 'e' || event.key == 'E')
+    if(event.key == 'e' || event.key == 'E' || event.key == 'ArrowRight')
     {
         isEPressed = false;
     }
