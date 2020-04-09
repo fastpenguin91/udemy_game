@@ -26,7 +26,7 @@ class Dude {
         if (speed) {
             this.speed = speed;
         } else { 
-            this.speed = 1;
+            this.speed = 0.75;
         }
         if (scaling) {
             this.scaling = scaling;
@@ -778,7 +778,8 @@ function createHeroDude(scene)
             for ( var q = 1; q <= 10; q++) {
                 scene.dudes[q] = DoClone(heroDude, skeletons, q);
                 scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
-                var temp = new Dude(scene.dudes[q], 2, q, scene, .2);
+                //console.log(scene.dudes);
+                var temp = new Dude(scene.dudes[q], 0.5, q, scene, .2);
     
             }
 
@@ -881,7 +882,6 @@ function moveOtherDudes(scene)
 {
     if(scene.dudes) {
         for(var q = 1; q< scene.dudes.length; q++) {
-            console.log("dude " + q + " following tank");
             scene.dudes[q].Dude.followTank();
         }
     }
