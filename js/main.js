@@ -58,6 +58,28 @@ class Rabbit {
     }
 }
 
+class Car {
+    constructor(carMesh) {
+        this.carMesh = carMesh;
+        carMesh.Car = this;
+        this.speed = 1;
+    }
+
+    move()
+    {
+        console.log("in car move()");
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.carMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.carMesh.rotation.y = alpha + 3.15;
+        if(distance > 30) {
+            this.carMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+    }
+}
+
 
 function startGame() {
     canvas = document.getElementById("renderCanvas");
@@ -69,11 +91,17 @@ function startGame() {
         tank.move();
         var heroDude = scene.getMeshByName("heroDude");
         var heroRabbit = scene.getMeshByName("heroRabbit");
+        var heroCar = scene.getMeshByName("heroCar");
         if(heroDude) {
             heroDude.Dude.move();
         }
         if(heroRabbit) {
+            console.log("rabbit moving");
             heroRabbit.Rabbit.move();
+        }
+        if(heroCar) {
+            console.log("car moving");
+            heroCar.Car.move();
         }
 
 
@@ -92,6 +120,7 @@ var createScene = function () {
     createLights(scene);
     createHeroDude(scene);
     createHeroRabbit(scene);
+    createHeroCar(scene);
 
 
     return scene;
@@ -208,6 +237,21 @@ function createHeroRabbit(scene)
 
         var rabbit = new Rabbit(heroRabbit);
         
+    });
+
+}
+
+function createHeroCar(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Low-Poly-Racing-Car/", "Low-Poly-Racing-Car.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,4,50);
+        meshes[0].name = "heroCar";
+        meshes[0].scaling = new BABYLON.Vector3(.08, .08, .08);
+
+        var heroCar = meshes[0];
+        //scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var car = new Car(heroCar);
     });
 
 }
