@@ -229,6 +229,111 @@ class Rabbit {
 
 }
 
+class Car {
+    constructor(carMesh, speed, id, scene, scaling) {
+        this.carMesh = carMesh;
+        this.id = id;
+        this.scene = scene;
+        this.scaling = .1;
+        carMesh.Car = this;
+        this.speed = 1;
+        if(Car.boundingBoxParameters == undefined)
+        {
+            Car.boundingBoxParameters = this.calculateBoundingBoxParameters();
+        }
+
+        this.bounder = this.createBoundingBox();
+        this.bounder.carMesh = this.carMesh;
+    }
+
+    move()
+    {
+        if (!this.bounder) return;
+        this.carMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Car.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.carMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.carMesh.rotation.y = alpha + 3.15;
+        if(distance > 30) {
+            this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+    }
+
+    createBoundingBox()
+    {
+        var lengthX = Car.boundingBoxParameters.lengthX;
+        var lengthY = Car.boundingBoxParameters.lengthY;
+        var lengthZ = Car.boundingBoxParameters.lengthZ;
+
+        var bounder = new BABYLON.Mesh.CreateBox("bounder" + (this.id).toString(), 1, this.scene);
+
+        bounder.scaling.x = lengthX * this.scaling;
+        bounder.scaling.y = lengthY * this.scaling;
+        bounder.scaling.z = lengthZ * this.scaling * 2;
+
+        bounder.isVisible = true;
+
+        var bounderMaterial = new BABYLON.StandardMaterial("bounderMaterial", this.scene);
+        bounderMaterial.alpha = .5;
+        bounder.material = bounderMaterial;
+        bounder.checkCollisions = true;
+
+        bounder.position = new BABYLON.Vector3(this.carMesh.position.x, this.carMesh.position.y + this.scaling * lengthY/2, this.carMesh.position.z);
+
+
+        return bounder;
+
+    }
+
+    calculateBoundingBoxParameters()
+    {
+        var minX = 999999; var minY = 999999; var minZ = 999999;
+        var maxX = -99999; var maxY = -99999; var maxZ = -99999;
+
+        var children = this.carMesh.getChildren();
+
+        for (var i = 0; i < children.length; i++ )
+        {
+            var positions = new BABYLON.VertexData.ExtractFromGeometry(children[i]).positions;
+            if(!positions) continue;
+
+            var index = 0;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minX)
+                    minX = positions[j];
+                if( positions[j] > maxX)
+                    maxX = positions[j];
+            }
+            index = 1;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minY)
+                    minY = positions[j];
+                if( positions[j] > maxY)
+                    maxY = positions[j];
+            }
+            index = 2;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minZ)
+                    minZ = positions[j];
+                if( positions[j] > maxZ)
+                    maxZ = positions[j];
+            }
+
+            var _lengthX = maxX - minX;
+            var _lengthY = maxY - minY;
+            var _lengthZ = maxZ - minZ;
+
+        }
+
+        return {lengthX : _lengthX , lengthY: _lengthY , lengthZ : _lengthZ};
+    }
+
+}
+
+
 
 
 
@@ -242,11 +347,15 @@ function startGame() {
         tank.move();
         var heroDude = scene.getMeshByName("heroDude");
         var heroRabbit = scene.getMeshByName("heroRabbit");
+        var heroCar = scene.getMeshByName("heroCar");
         if(heroDude) {
             heroDude.Dude.move();
         }
         if(heroRabbit) {
             heroRabbit.Rabbit.move();
+        }
+        if(heroCar) {
+            heroCar.Car.move();
         }
         if(scene.dudes) {
             for(var q = 0; q< scene.dudes.length; q++) {
@@ -256,6 +365,11 @@ function startGame() {
         if(scene.rabbits) {
             for(var q = 0; q< scene.rabbits.length; q++) {
                 scene.rabbits[q].Rabbit.move();
+            }
+        }
+        if(scene.cars) {
+            for(var q = 0; q< scene.cars.length; q++) {
+                scene.cars[q].Car.move();
             }
         }
 
@@ -274,6 +388,7 @@ var createScene = function () {
     createLights(scene);
     createHeroDude(scene);
     createHeroRabbit(scene);
+    createHeroCar(scene);
 
 
     return scene;
@@ -401,6 +516,27 @@ function createHeroRabbit(scene)
             scene.rabbits[q] = DoClone(heroRabbit, skeletons, q);
             scene.beginAnimation(scene.rabbits[q].skeleton, 0, 70, true, 2.0);
             var temp = new Rabbit(scene.rabbits[q], 2, q, scene, .1);
+        }   
+        
+    });
+
+}
+
+function createHeroCar(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Low-Poly-Racing-Car/", "Low-Poly-Racing-Car.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,4,50);
+        meshes[0].name = "heroCar";
+        var heroCar = meshes[0];
+        heroCar.scaling = new BABYLON.Vector3(.08, .08, .08);
+        //scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var car = new Car(heroCar, 2, -1, scene, .2);
+
+        scene.cars = [];
+        for (var q = 0; q < 5; q++) {
+            scene.cars[q] = DoClone(heroCar, skeletons, q);
+            var temp = new Car(scene.cars[q], 2, q, scene, .1);
         }   
         
     });
