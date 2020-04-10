@@ -128,20 +128,25 @@ class Dude {
 class Rabbit {
     constructor(rabbitMesh, speed, id, scene, scaling) {
         this.rabbitMesh = rabbitMesh;
-        //this.id = id;
+        this.id = id;
+        this.scene = scene;
+        this.scaling = .1;
         rabbitMesh.Rabbit = this;
         this.speed = 1;
         if(Rabbit.boundingBoxParameters == undefined)
         {
-        //     Rabbit.boundingBoxParameters = this.calculateBoundingBoxParameters();
+            Rabbit.boundingBoxParameters = this.calculateBoundingBoxParameters();
         }
 
-        //this.bounder = this.createBoundingBox();
-        // this.bounder.rabbitMesh = this.rabbitMesh;
+        this.bounder = this.createBoundingBox();
+        this.bounder.rabbitMesh = this.rabbitMesh;
     }
 
     move()
     {
+        if (!this.bounder) return;
+        this.rabbitMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Rabbit.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
         var tank = scene.getMeshByName("heroTank");
         var direction = tank.position.subtract(this.rabbitMesh.position);
         var distance = direction.length();
@@ -149,7 +154,7 @@ class Rabbit {
         var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
         this.rabbitMesh.rotation.y = alpha + 3.15;
         if(distance > 30) {
-            this.rabbitMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+            this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         }
     }
 
@@ -389,7 +394,7 @@ function createHeroRabbit(scene)
         heroRabbit.scaling = new BABYLON.Vector3(.1, .1, .1);
         scene.beginAnimation(skeletons[0],0,70,true,2.0);
 
-        var rabbit = new Rabbit(heroRabbit);
+        var rabbit = new Rabbit(heroRabbit, 2, -1, scene, .2);
 
         scene.rabbits = [];
         for (var q = 0; q < 5; q++) {
