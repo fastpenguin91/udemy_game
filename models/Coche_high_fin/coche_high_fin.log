@@ -1,0 +1,923 @@
+Exporter version: 6.3.1, Blender version: 2.82 (sub 7)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used :
+		Inline textures     :  false
+		Material Type       :  PBR
+		Positions Precision :  4
+		Normals Precision   :  3
+		UVs Precision       :  3
+		Vert Color Precision:  3
+		Mat Weight Precision:  2
+		Keep Z-up r-handed  :  no
+		Texture directory   :  C:\Users\fastp\Downloads\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  back_right_wheel
+		processing begun of material:  Material.002
+			WARNING: unsupported node type(ShaderNodeMixRGB) will trigger baking
+		processing begun of material:  tyre_rin
+		processing begun of material:  Material.007
+		processing begun of material:  tyre_rin_bolts
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture back_right_wheel_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture back_right_wheel_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			Baking texture, type: NORMAL, mapped using: BakingUV
+			processing texture back_right_wheel_baked_NORMAL
+				texture type:  bumpTexture, mapped using: "BakingUV"
+			bake time:  0 min, 5.5811 secs
+		num positions      :  48931
+		num normals        :  48931
+		num tangents       :  0
+		num uvs            :  97862
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  91152
+		WARNING: # of 0 area faces found:  1180
+	processing begun of mesh:  front_right_wheel
+		processing begun of material:  Material.002
+			WARNING: unsupported node type(ShaderNodeMixRGB) will trigger baking
+		processing begun of material:  tyre_rin
+		processing begun of material:  Material.007
+		processing begun of material:  tyre_rin_bolts
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture front_right_wheel_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_right_wheel_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			Baking texture, type: NORMAL, mapped using: BakingUV
+			processing texture front_right_wheel_baked_NORMAL
+				texture type:  bumpTexture, mapped using: "BakingUV"
+			bake time:  0 min, 5.568 secs
+		num positions      :  48933
+		num normals        :  48933
+		num tangents       :  0
+		num uvs            :  97866
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  91152
+		WARNING: # of 0 area faces found:  1158
+	processing begun of mesh:  front_left_wheel
+		processing begun of material:  Material.002
+			WARNING: unsupported node type(ShaderNodeMixRGB) will trigger baking
+		processing begun of material:  tyre_rin
+		processing begun of material:  Material.007
+		processing begun of material:  tyre_rin_bolts
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture front_left_wheel_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_left_wheel_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			Baking texture, type: NORMAL, mapped using: BakingUV
+			processing texture front_left_wheel_baked_NORMAL
+				texture type:  bumpTexture, mapped using: "BakingUV"
+			bake time:  0 min, 5.6643 secs
+		num positions      :  49235
+		num normals        :  49235
+		num tangents       :  0
+		num uvs            :  98470
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  91152
+		WARNING: # of 0 area faces found:  1158
+	processing begun of mesh:  right_door_handle
+		processing begun of material:  car
+		num positions      :  93
+		num normals        :  93
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  456
+	processing begun of mesh:  right_door
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  1137
+		num normals        :  1137
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  5712
+	processing begun of mesh:  rear_right_window
+		processing begun of material:  glass
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0096 secs
+		num positions      :  95
+		num normals        :  95
+		num tangents       :  0
+		num uvs            :  190
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  window_bar_right
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  373
+		num normals        :  373
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1752
+	processing begun of mesh:  front_right_glass_lights
+		processing begun of material:  Material.007
+		processing begun of material:  Material.005
+		processing begun of material:  Material.009
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: EMIT, mapped using: BakingUV
+			processing texture front_right_glass_lights_baked_EMIT
+				texture type:  emissiveTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_right_glass_lights_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			bake time:  0 min, 5.5228 secs
+		num positions      :  41984
+		num normals        :  41984
+		num tangents       :  0
+		num uvs            :  83968
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60213
+	processing begun of mesh:  front_right_glass_inside.001
+		processing begun of material:  Material.004
+		processing begun of material:  Material.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  Material.003
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  Material.007
+		processing begun of material:  Material.008
+		processing begun of material:  glass_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture front_right_glass_inside_001_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_right_glass_inside_001_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			bake time:  0 min, 2.7817 secs
+		num positions      :  7573
+		num normals        :  7573
+		num tangents       :  0
+		num uvs            :  15146
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  25152
+	processing begun of mesh:  lights_front_left_glass
+		processing begun of material:  Material.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0558 secs
+		num positions      :  1657
+		num normals        :  1657
+		num tangents       :  0
+		num uvs            :  3314
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6144
+	processing begun of mesh:  lights_front_glass.001
+		processing begun of material:  Material.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0576 secs
+		num positions      :  1659
+		num normals        :  1659
+		num tangents       :  0
+		num uvs            :  3318
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6144
+	processing begun of mesh:  audi_front
+		processing begun of material:  Material.007
+		num positions      :  1080
+		num normals        :  1080
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6480
+	processing begun of mesh:  audi_back.003
+		processing begun of material:  Material.007
+		registered as also a user of material:  Material.007
+		num positions      :  1080
+		num normals        :  1080
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6480
+	processing begun of mesh:  back_ailerons
+		processing begun of material:  Material.011
+		num positions      :  2960
+		num normals        :  2960
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  17664
+	processing begun of mesh:  back_ailerons.001
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  910
+		num normals        :  910
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  936
+	processing begun of mesh:  back_ailerons_support
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  2228
+		num normals        :  2228
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  13344
+	processing begun of mesh:  back_bottom_light.003
+		processing begun of material:  back_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.007 secs
+		num positions      :  214
+		num normals        :  214
+		num tangents       :  0
+		num uvs            :  428
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  720
+	processing begun of mesh:  back_bottom_net.003
+		processing begun of material:  Material.011
+		registered as also a user of material:  Material.011
+		num positions      :  38061
+		num normals        :  38061
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  38208
+	processing begun of mesh:  back_glass
+		processing begun of material:  glass
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  Material.008
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture back_glass_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture back_glass_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			bake time:  0 min, 2.4941 secs
+		num positions      :  2828
+		num normals        :  2828
+		num tangents       :  0
+		num uvs            :  5656
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  10656
+	processing begun of mesh:  back_lights.003
+		processing begun of material:  backlight.002
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  BACK_LIGHTS_BACK
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  backlight
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  backlight.001
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+			bake time:  0 min, 0.5176 secs
+		num positions      :  17040
+		num normals        :  17040
+		num tangents       :  0
+		num uvs            :  34080
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  17040
+	processing begun of mesh:  back_lights_park.003
+		processing begun of material:  BACK_LIGHTS_BACK
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  back_lights.002
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0103 secs
+		num positions      :  473
+		num normals        :  473
+		num tangents       :  0
+		num uvs            :  946
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  528
+	processing begun of mesh:  back_nets
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  32189
+		num normals        :  32189
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  32340
+	processing begun of mesh:  back
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#0
+		num positions      :  5194
+		num normals        :  5194
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  27348
+	processing begun of mesh:  back_plate_bottom
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		num positions      :  1047
+		num normals        :  1047
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  5916
+	processing begun of mesh:  back_roof_lights
+		processing begun of material:  back_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.006 secs
+		num positions      :  240
+		num normals        :  240
+		num tangents       :  0
+		num uvs            :  480
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  960
+	processing begun of mesh:  back_trunk
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  213
+		num normals        :  213
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1104
+	processing begun of mesh:  back_lights
+		processing begun of material:  BACK_LIGHTS_BACK
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  backlight
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  back_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  back_lights.002
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  back_lights.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.4371 secs
+		num positions      :  11316
+		num normals        :  11316
+		num tangents       :  0
+		num uvs            :  22632
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  42768
+		WARNING: # of 0 area faces found:  192
+	processing begun of mesh:  back_lights_glass
+		processing begun of material:  BACK_LIGHTS_BACK
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  backlight
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  back_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  back_lights.002
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  back_lights.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.1187 secs
+		num positions      :  4246
+		num normals        :  4246
+		num tangents       :  0
+		num uvs            :  8492
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  13824
+	processing begun of mesh:  bottom_back_lights.003
+		processing begun of material:  backlight
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+			Baking texture, type: EMIT, mapped using: BakingUV
+			processing texture backlight_EMIT
+				texture type:  emissiveTexture, mapped using: "BakingUV"
+			bake time:  0 min, 1.051 secs
+		num positions      :  178
+		num normals        :  178
+		num tangents       :  0
+		num uvs            :  356
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  192
+	processing begun of mesh:  bottom_sides
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#1
+		num positions      :  4273
+		num normals        :  4273
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  20592
+		WARNING: # of 0 area faces found:  14
+	processing begun of mesh:  break_lights.003
+		processing begun of material:  backlight
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+			Baking texture, type: EMIT, mapped using: BakingUV
+			processing texture backlight_EMIT
+				texture type:  emissiveTexture, mapped using: "BakingUV"
+			bake time:  0 min, 1.0359 secs
+		num positions      :  1080
+		num normals        :  1080
+		num tangents       :  0
+		num uvs            :  2160
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1080
+	processing begun of mesh:  left_door_handle
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  93
+		num normals        :  93
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  456
+	processing begun of mesh:  left_door
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  1138
+		num normals        :  1138
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  5712
+	processing begun of mesh:  exhaust_pipes
+		processing begun of material:  Material.012
+		num positions      :  576
+		num normals        :  576
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  3456
+	processing begun of mesh:  front_ailerons
+		processing begun of material:  Material.011
+		registered as also a user of material:  Material.011
+		num positions      :  2460
+		num normals        :  2460
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  14688
+	processing begun of mesh:  front_bottom_support
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		num positions      :  1107
+		num normals        :  1107
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6228
+	processing begun of mesh:  front_left_glass_inside
+		processing begun of material:  Material.004
+		processing begun of material:  Material.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+		processing begun of material:  Material.003
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+		processing begun of material:  Material.007
+		processing begun of material:  Material.008
+		processing begun of material:  glass_lights
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture front_left_glass_inside_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_left_glass_inside_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			bake time:  0 min, 3.0098 secs
+		num positions      :  7598
+		num normals        :  7598
+		num tangents       :  0
+		num uvs            :  15196
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  25152
+	processing begun of mesh:  front_left_glass_lights
+		processing begun of material:  Material.007
+		processing begun of material:  Material.005
+		processing begun of material:  Material.009
+			WARNING: unsupported node type(ShaderNodeBlackbody) will trigger baking
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: EMIT, mapped using: BakingUV
+			processing texture front_left_glass_lights_baked_EMIT
+				texture type:  emissiveTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture front_left_glass_lights_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			bake time:  0 min, 5.9823 secs
+		num positions      :  42122
+		num normals        :  42122
+		num tangents       :  0
+		num uvs            :  84244
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  60213
+	processing begun of mesh:  front_bottom
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#2
+		num positions      :  4472
+		num normals        :  4472
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  22752
+		WARNING: # of 0 area faces found:  20
+	processing begun of mesh:  front_plate_metal
+		processing begun of material:  Material.012
+		registered as also a user of material:  Material.012
+		num positions      :  320
+		num normals        :  320
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1920
+	processing begun of mesh:  gas_supply_back
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#3
+		num positions      :  2957
+		num normals        :  2957
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  14916
+	processing begun of mesh:  gas_supply_sides
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		num positions      :  812
+		num normals        :  812
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  4032
+	processing begun of mesh:  hood
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#4
+		num positions      :  2837
+		num normals        :  2837
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  15720
+	processing begun of mesh:  inside_plate_back_lights
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		num positions      :  378
+		num normals        :  378
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2244
+	processing begun of mesh:  inside_plate_front
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		num positions      :  164
+		num normals        :  164
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  570
+	processing begun of mesh:  inside_plate_front_lights.003
+		processing begun of material:  Material.011
+		registered as also a user of material:  Material.011
+		num positions      :  224
+		num normals        :  224
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1140
+	processing begun of mesh:  left_rear_view_mirror_bottom
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  114
+		num normals        :  114
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  672
+	processing begun of mesh:  left_rear_view_mirror
+		processing begun of material:  car
+		processing begun of material:  mirror
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#5
+		num positions      :  1256
+		num normals        :  1256
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  7260
+	processing begun of mesh:  right_rear_view_mirror
+		processing begun of material:  car
+		processing begun of material:  mirror
+		registered as also a user of material:  mirror
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#6
+		num positions      :  1256
+		num normals        :  1256
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  7260
+	processing begun of mesh:  license_plate
+		processing begun of material:  license_plate
+		processing begun of material:  Material.008
+			processing texture license_plate
+				WARNING: Exception during copy:
+					[Errno 2] No such file or directory: 'C:\\Users\\fastp\\Downloads\\TEXTURES\\license_plate.png'
+				texture type:  diffuseTexture, mapped using: "UVMap"
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#7
+		num positions      :  56
+		num normals        :  56
+		num tangents       :  0
+		num uvs            :  112
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  66
+	processing begun of mesh:  license_plate.006
+		processing begun of material:  license_plate
+		processing begun of material:  Material.008
+			processing texture license_plate
+				WARNING: Exception during copy:
+					[Errno 2] No such file or directory: 'C:\\Users\\fastp\\Downloads\\TEXTURES\\license_plate.png'
+				texture type:  diffuseTexture, mapped using: "UVMap"
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#8
+		num positions      :  56
+		num normals        :  56
+		num tangents       :  0
+		num uvs            :  112
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  66
+	processing begun of mesh:  light_nets.003
+		processing begun of material:  Material.011
+		registered as also a user of material:  Material.011
+		num positions      :  19908
+		num normals        :  19908
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  125760
+	processing begun of mesh:  lights_front_glass
+		processing begun of material:  Material.001
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0042 secs
+		num positions      :  0
+		num normals        :  0
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  0
+	WARNING: mesh, lights_front_glass, has 0 vertices; ignored
+	processing begun of mesh:  net_front
+		processing begun of material:  Material.011
+		registered as also a user of material:  Material.011
+		num positions      :  2402
+		num normals        :  2402
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  15264
+	processing begun of mesh:  rear_left_window
+		processing begun of material:  glass
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.011 secs
+		num positions      :  95
+		num normals        :  95
+		num tangents       :  0
+		num uvs            :  190
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  432
+	processing begun of mesh:  right_rear_view_mirror_bottom
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  114
+		num normals        :  114
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  672
+	processing begun of mesh:  roof
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  486
+		num normals        :  486
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2448
+	processing begun of mesh:  rubber_windshield
+		processing begun of material:  rubber
+		num positions      :  298
+		num normals        :  298
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1284
+	processing begun of mesh:  side
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#9
+		num positions      :  1500
+		num normals        :  1500
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6672
+	processing begun of mesh:  spoiler
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  598
+		num normals        :  598
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2784
+		WARNING: # of 0 area faces found:  24
+	processing begun of mesh:  back_left_wheel
+		processing begun of material:  Material.002
+			WARNING: unsupported node type(ShaderNodeMixRGB) will trigger baking
+		processing begun of material:  tyre_rin
+		processing begun of material:  Material.007
+		processing begun of material:  tyre_rin_bolts
+			WARNING: Roughness channel baking required, but not possible, ignored
+			Baking texture, type: DIFFUSE, mapped using: BakingUV
+			processing texture back_left_wheel_baked_DIFFUSE
+				texture type:  diffuseTexture, mapped using: "BakingUV"
+			Baking texture, type: GLOSSY, mapped using: BakingUV
+			processing texture back_left_wheel_baked_GLOSSY
+				texture type:  specularTexture, mapped using: "BakingUV"
+			Baking texture, type: NORMAL, mapped using: BakingUV
+			processing texture back_left_wheel_baked_NORMAL
+				texture type:  bumpTexture, mapped using: "BakingUV"
+			bake time:  0 min, 6.2631 secs
+		num positions      :  49233
+		num normals        :  49233
+		num tangents       :  0
+		num uvs            :  98466
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  91152
+		WARNING: # of 0 area faces found:  1180
+	processing begun of mesh:  wheel_support.003
+		processing begun of material:  car
+		processing begun of material:  Material.008
+		registered as also a user of material:  Material.008
+		processing begun of multimaterial:  coche_high_fin.Multimaterial#10
+		num positions      :  1081
+		num normals        :  1081
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  4992
+	processing begun of mesh:  window_bar_left
+		processing begun of material:  car
+		registered as also a user of material:  car
+		num positions      :  374
+		num normals        :  374
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1752
+	processing begun of mesh:  window_rubber
+		processing begun of material:  rubber
+		registered as also a user of material:  rubber
+		num positions      :  1260
+		num normals        :  1260
+		num tangents       :  0
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  7584
+	processing begun of mesh:  windshield
+		processing begun of material:  glass
+			WARNING: unsupported node type(ShaderNodeBsdfGlass) will trigger baking
+			bake time:  0 min, 0.0237 secs
+		num positions      :  311
+		num normals        :  311
+		num tangents       :  0
+		num uvs            :  622
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1680
+========= Writing of JSON file started =========
+	writing mesh:  back_right_wheel
+	writing mesh:  front_right_wheel
+	writing mesh:  front_left_wheel
+	writing mesh:  right_door_handle
+	writing mesh:  right_door
+	writing mesh:  rear_right_window
+	writing mesh:  window_bar_right
+	writing mesh:  front_right_glass_lights
+	writing mesh:  front_right_glass_inside.001
+	writing mesh:  lights_front_left_glass
+	writing mesh:  lights_front_glass.001
+	writing mesh:  audi_front
+	writing mesh:  audi_back.003
+	writing mesh:  back_ailerons
+	writing mesh:  back_ailerons.001
+	writing mesh:  back_ailerons_support
+	writing mesh:  back_bottom_light.003
+	writing mesh:  back_bottom_net.003
+	writing mesh:  back_glass
+	writing mesh:  back_lights.003
+	writing mesh:  back_lights_park.003
+	writing mesh:  back_nets
+	writing mesh:  back
+	writing mesh:  back_plate_bottom
+	writing mesh:  back_roof_lights
+	writing mesh:  back_trunk
+	writing mesh:  back_lights
+	writing mesh:  back_lights_glass
+	writing mesh:  bottom_back_lights.003
+	writing mesh:  bottom_sides
+	writing mesh:  break_lights.003
+	writing mesh:  left_door_handle
+	writing mesh:  left_door
+	writing mesh:  exhaust_pipes
+	writing mesh:  front_ailerons
+	writing mesh:  front_bottom_support
+	writing mesh:  front_left_glass_inside
+	writing mesh:  front_left_glass_lights
+	writing mesh:  front_bottom
+	writing mesh:  front_plate_metal
+	writing mesh:  gas_supply_back
+	writing mesh:  gas_supply_sides
+	writing mesh:  hood
+	writing mesh:  inside_plate_back_lights
+	writing mesh:  inside_plate_front
+	writing mesh:  inside_plate_front_lights.003
+	writing mesh:  left_rear_view_mirror_bottom
+	writing mesh:  left_rear_view_mirror
+	writing mesh:  right_rear_view_mirror
+	writing mesh:  license_plate
+	writing mesh:  license_plate.006
+	writing mesh:  light_nets.003
+	writing mesh:  net_front
+	writing mesh:  rear_left_window
+	writing mesh:  right_rear_view_mirror_bottom
+	writing mesh:  roof
+	writing mesh:  rubber_windshield
+	writing mesh:  side
+	writing mesh:  spoiler
+	writing mesh:  back_left_wheel
+	writing mesh:  wheel_support.003
+	writing mesh:  window_bar_left
+	writing mesh:  window_rubber
+	writing mesh:  windshield
+========= Writing of JSON file completed =========
+========= end of processing =========
+elapsed time:  1 min, 10.0765 secs
