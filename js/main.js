@@ -28,12 +28,33 @@ class Dude {
         var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
         this.dudeMesh.rotation.y = alpha;
         if(distance > 30) {
-            console.log("moving");
+            //console.log("moving");
             this.dudeMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         } else {
-            console.log("not moving");
+            //console.log("not moving");
         }
 
+    }
+}
+
+class Rabbit {
+    constructor(rabbitMesh) {
+        this.rabbitMesh = rabbitMesh;
+        rabbitMesh.Rabbit = this;
+        this.speed = 1;
+    }
+
+    move()
+    {
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.rabbitMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.rabbitMesh.rotation.y = alpha + 3.15;
+        if(distance > 30) {
+            this.rabbitMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
     }
 }
 
@@ -47,9 +68,14 @@ function startGame() {
     var toRender = function () {
         tank.move();
         var heroDude = scene.getMeshByName("heroDude");
+        var heroRabbit = scene.getMeshByName("heroRabbit");
         if(heroDude) {
             heroDude.Dude.move();
         }
+        if(heroRabbit) {
+            heroRabbit.Rabbit.move();
+        }
+
 
         scene.render();
     }
@@ -65,6 +91,7 @@ var createScene = function () {
     scene.activeCamera = followCamera;
     createLights(scene);
     createHeroDude(scene);
+    createHeroRabbit(scene);
 
 
     return scene;
@@ -171,6 +198,22 @@ function createHeroDude(scene)
 }
 
 
+function createHeroRabbit(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,0,100);
+        meshes[0].name = "heroRabbit";
+        var heroRabbit = meshes[0];
+        scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var rabbit = new Rabbit(heroRabbit);
+        
+    });
+
+}
+
+
+
 
 window.addEventListener("resize", function () {
     engine.resize();
@@ -181,7 +224,6 @@ function modifySettings() {
     scene.onPointerDown = function()
     {
         if(!scene.alreadyLocked) {
-            console.log("Requesting pointer lock");
             canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock ||
             canvas.webkitRequestPointerLock;
             canvas.requestPointerLock();
