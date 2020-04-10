@@ -58,6 +58,27 @@ class Rabbit {
     }
 }
 
+class Car {
+    constructor(carMesh) {
+        this.carMesh = carMesh;
+        carMesh.Car = this;
+        this.speed = 1;
+    }
+
+    move()
+    {
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.carMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.carMesh.rotation.y = alpha;
+        if(distance > 30) {
+            this.carMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+    }
+}
+
 
 
 function startGame() {
@@ -70,11 +91,15 @@ function startGame() {
         tank.move();
         var heroDude = scene.getMeshByName("heroDude");
         var heroRabbit = scene.getMeshByName("heroRabbit");
+        var heroCar = scene.getMeshByName("heroCar");
         if(heroRabbit) {
             heroRabbit.Rabbit.move();
         }
         if(heroDude) {
             heroDude.Dude.move();
+        }
+        if(heroCar) {
+            heroCar.Car.move();
         }
         if(scene.dudes) {
             for(var q = 0; q< scene.dudes.length; q++) {
@@ -84,6 +109,11 @@ function startGame() {
         if(scene.rabbits) {
             for(var q = 0; q< scene.rabbits.length; q++) {
                 scene.rabbits[q].Rabbit.move();
+            }
+        }
+        if(scene.cars) {
+            for(var q = 0; q< scene.cars.length; q++) {
+                scene.cars[q].Car.move();
             }
         }
 
@@ -102,6 +132,7 @@ var createScene = function () {
     createLights(scene);
     createHeroDude(scene);
     createHeroRabbit(scene);
+    createHeroCar(scene);
 
     return scene;
 };
@@ -229,6 +260,28 @@ function createHeroRabbit(scene)
             scene.beginAnimation(scene.rabbits[q].skeleton, 0, 70, true, 2.0);
             var temp = new Rabbit(scene.rabbits[q], 2);
         }   
+        
+    });
+
+}
+
+function createHeroCar(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Low-Poly-Racing-Car/", "Low-Poly-Racing-Car.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,4,50);
+        meshes[0].name = "heroCar";
+        var heroCar = meshes[0];
+        heroCar.scaling = new BABYLON.Vector3(.08, .08, .08);
+        //scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var car = new Car(heroCar);
+
+         scene.cars = [];
+         for (var q = 0; q < 5; q++) {
+             scene.cars[q] = DoClone(heroCar, skeletons, q);
+             //scene.beginAnimation(scene.cars[q].skeleton, 0, 70, true, 2.0);
+             var temp = new Car(scene.cars[q], 2);
+         }   
         
     });
 
