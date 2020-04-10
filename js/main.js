@@ -4,7 +4,6 @@ var engine;
 var Game = {};
 Game.scenes = [];
 Game.activeScene = 0;
-console.log("makin sure");
 var isWPressed = false;
 var isSPressed = false;
 var isAPressed = false;
@@ -294,7 +293,6 @@ class Dude {
         scene.assets["dieSound"].play();
 
         Dude.particleSystem.emitter = this.bounder.position;
-        console.log(this.bounder);
         Dude.particleSystem.emitRate = 2000;
 
         Dude.particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
@@ -313,6 +311,151 @@ class Dude {
         this.dudeMesh.dispose();
     }
     
+}
+
+class Rabbit {
+    constructor(rabbitMesh, speed, id, scene, scaling) {
+        this.rabbitMesh = rabbitMesh;
+        this.id = id;
+        this.scene = scene;
+        this.health = 3;
+        this.scaling = .1;
+        rabbitMesh.Rabbit = this;
+        this.speed = 1;
+        if(Rabbit.boundingBoxParameters == undefined)
+        {
+            Rabbit.boundingBoxParameters = this.calculateBoundingBoxParameters();
+        }
+
+        this.bounder = this.createBoundingBox();
+        this.bounder.rabbitMesh = this.rabbitMesh;
+    }
+
+    move()
+    {
+        var scene = this.scene;
+        if (!this.bounder) return;
+        this.rabbitMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Rabbit.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.rabbitMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.rabbitMesh.rotation.y = alpha + 3.15;
+        if(distance > 30) {
+            this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+    }
+
+    createBoundingBox()
+    {
+        var lengthX = Rabbit.boundingBoxParameters.lengthX;
+        var lengthY = Rabbit.boundingBoxParameters.lengthY;
+        var lengthZ = Rabbit.boundingBoxParameters.lengthZ;
+
+        var bounder = new BABYLON.Mesh.CreateBox("bounder" + (this.id).toString(), 1, this.scene);
+
+        bounder.scaling.x = lengthX * this.scaling;
+        bounder.scaling.y = lengthY * this.scaling;
+        bounder.scaling.z = lengthZ * this.scaling * 2;
+
+        bounder.isVisible = true;
+
+        var bounderMaterial = new BABYLON.StandardMaterial("bounderMaterial", this.scene);
+        bounderMaterial.alpha = .5;
+        bounder.material = bounderMaterial;
+        bounder.checkCollisions = true;
+
+        bounder.position = new BABYLON.Vector3(this.rabbitMesh.position.x, this.rabbitMesh.position.y + this.scaling * lengthY/2, this.rabbitMesh.position.z);
+
+
+        return bounder;
+
+    }
+
+    calculateBoundingBoxParameters()
+    {
+        var minX = 999999; var minY = 999999; var minZ = 999999;
+        var maxX = -99999; var maxY = -99999; var maxZ = -99999;
+
+        var children = this.rabbitMesh.getChildren();
+
+        for (var i = 0; i < children.length; i++ )
+        {
+            var positions = new BABYLON.VertexData.ExtractFromGeometry(children[i]).positions;
+            if(!positions) continue;
+
+            var index = 0;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minX)
+                    minX = positions[j];
+                if( positions[j] > maxX)
+                    maxX = positions[j];
+            }
+            index = 1;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minY)
+                    minY = positions[j];
+                if( positions[j] > maxY)
+                    maxY = positions[j];
+            }
+            index = 2;
+            for(var j = index; j < positions.length; j +=3) {
+                if (positions[j] < minZ)
+                    minZ = positions[j];
+                if( positions[j] > maxZ)
+                    maxZ = positions[j];
+            }
+
+            var _lengthX = maxX - minX;
+            var _lengthY = maxY - minY;
+            var _lengthZ = maxZ - minZ;
+
+        }
+
+        return {lengthX : _lengthX , lengthY: _lengthY , lengthZ : _lengthZ};
+    }
+
+    decreaseHealth(hitPoint)
+    {
+        //Dude.particleSystem.emitter = hitPoint;
+        this.health--;
+        //Dude.particleSystem.start();
+        //setTimeout(function() {
+         //   Dude.particleSystem.stop();
+        //}, 300);
+        if(this.health <= 0)
+        {
+            this.gotKilled();
+        }
+    }
+
+    gotKilled() {
+        var scene = this.scene;
+        scene.assets["dieSound"].play();
+
+        //Dude.particleSystem.emitter = this.bounder.position;
+        //Dude.particleSystem.emitRate = 2000;
+
+        //Dude.particleSystem.minEmitBox = new BABYLON.Vector3(-1, 0, -1);
+        //Dude.particleSystem.maxEmitBox = new BABYLON.Vector3(1, 0, 1);
+
+        // Direction of each particle after it has been emitted
+        //Dude.particleSystem.direction1 = new BABYLON.Vector3(0, 1, 0);
+        //Dude.particleSystem.direction2 = new BABYLON.Vector3(0, -1, 0);
+
+        //Dude.particleSystem.start();
+        //setTimeout(function () {
+        //    Dude.particleSystem.stop();
+        //}, 300);
+
+        this.bounder.dispose();
+        this.rabbitMesh.dispose();
+    }
+
+
+
 }
 
 
@@ -338,6 +481,19 @@ function startFirstScene()
         tank.fireLaserBeams(scene);
         moveHeroDude(scene);
         moveOtherDudes(scene);
+
+        var heroRabbit = scene.getMeshByName("heroRabbit");
+        if(heroRabbit) {
+            heroRabbit.Rabbit.move();
+        }
+        if(scene.rabbits) {
+            for(var q = 0; q< scene.rabbits.length; q++) {
+                scene.rabbits[q].Rabbit.move();
+            }
+        }
+
+
+
         scene.render();
     }
 
@@ -374,6 +530,7 @@ var createFirstScene = function () {
     scene.activeCamera = scene.followCameraTank;
     createLights(scene);
     createHeroDude(scene);
+    createHeroRabbit(scene);
     loadSounds(scene);
     return scene;
 };
@@ -397,7 +554,6 @@ var createSecondScene = function () {
 };
 function CreateGround(scene) {
     var ground = new BABYLON.Mesh.CreateGroundFromHeightMap("ground","images/hmap1.png", 2000, 2000, 20, 0, 1000, scene, false, OnGroundCreated);
-    console.log(ground);
     function OnGroundCreated()
     {
         var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
@@ -641,7 +797,6 @@ function createTank(scene) {
     
     tank.fireCannonBalls = function(scene) {
         var tank = this;
-        //console.log("firing dangit");
         if(!isBPressed) return;
         if(!tank.canFireCannonBalls) return;
         tank.canFireCannonBalls = false;
@@ -686,6 +841,26 @@ function createTank(scene) {
 
 
         });
+
+        // Why are we registering this action on each dude/rabbit?
+        scene.rabbits.forEach(function(rabbit){
+            cannonBall.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+                {
+                    trigger : BABYLON.ActionManager.OnIntersectionEnterTrigger,
+                    parameter: rabbit.Rabbit.bounder
+                },
+                function () {
+                    
+                    if(rabbit.Rabbit.bounder._isDisposed) return;
+                    rabbit.Rabbit.gotKilled();
+                }
+            ));
+
+
+        });
+
+
+
         
         setTimeout(function() {
             cannonBall.dispose();
@@ -725,13 +900,32 @@ function createTank(scene) {
         for ( var i = 0; i < pickInfos.length; i++){
             var pickInfo = pickInfos[i];
             if (pickInfo.pickedMesh){
-                if(pickInfo.pickedMesh.name.startsWith("bounder")) {
-
+                if(pickInfo.pickedMesh.name.startsWith("bounder") && pickInfo.pickedMesh.name.includes("rabbit")){
+                    console.log("damaged rabbit");
+                    pickInfo.pickedMesh.rabbitMesh.Rabbit.decreaseHealth(pickInfo.pickedPoint);
+                }
+                else if(pickInfo.pickedMesh.name.startsWith("bounder") && pickInfo.pickedMesh.name.includes("dude")) {
+                    console.log("damaged dude");
                     pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
+                }
+                else if(pickInfo.pickedMesh.name.startsWith("clone") && pickInfo.pickedMesh.name.includes("rabbit")) {
+                    console.log("damaged rabbit CLONE");
+                }
+                else if (pickInfo.pickedMesh.name.startsWith("clonde") && pickInfo.pickedMesh.name.includes("dude")) {
+                    console.log("damaged dude CLONE");
+                }
+
+                if(pickInfo.pickedMesh.name.startsWith("bounder")) {
+                    //console.log("hit lala!");
+                    //console.log(pickInfo.pickedMesh.name);
+                    //console.log(pickInfo.pickedMesh.name.includes("rabbit"));
+                    //pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
                 
                 else if (pickInfo.pickedMesh.name.startsWith("clone")) {
-                    pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
+                    //console.log("something ELSE hit!");
+                    //console.log(pickInfo.pickedMesh.name);
+                    //pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
             }
         }
@@ -755,9 +949,8 @@ function createHeroDude(scene)
     
             for (var i = 1; i < heroDude.getChildren().length; i++)
             {
-                console.log(heroDude.getChildren()[i].name);
                 heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
-                console.log(heroDude.getChildren()[i].name);
+                console.log("child here");
             }
             
             heroDude.animatableObject = scene.beginAnimation(skeletons[0],0,120,true,1.0);
@@ -778,8 +971,7 @@ function createHeroDude(scene)
             for ( var q = 1; q <= 10; q++) {
                 scene.dudes[q] = DoClone(heroDude, skeletons, q);
                 scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
-                //console.log(scene.dudes);
-                var temp = new Dude(scene.dudes[q], Math.random().toFixed(2), q, scene, .2);
+                var temp = new Dude(scene.dudes[q], Math.random().toFixed(2), q + "dude", scene, .2);
     
             }
 
@@ -806,9 +998,7 @@ function createHeroDude(scene)
 
         for (var i = 1; i < heroDude.getChildren().length; i++)
         {
-            console.log(heroDude.getChildren()[i].name);
             heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
-            console.log(heroDude.getChildren()[i].name);
         }
         
         scene.beginAnimation(skeletons[0],0,120,true,1.0);
@@ -827,6 +1017,32 @@ function createHeroDude(scene)
     
 
 }
+
+function createHeroRabbit(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,0,100);
+        meshes[0].name = "heroRabbit";
+        var heroRabbit = meshes[0];
+        heroRabbit.scaling = new BABYLON.Vector3(.1, .1, .1);
+        scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var rabbit = new Rabbit(heroRabbit, 2, -1, scene, .2);
+
+        scene.rabbits = [];
+        for (var q = 0; q < 5; q++) {
+            scene.rabbits[q] = DoClone(heroRabbit, skeletons, q);
+            scene.beginAnimation(scene.rabbits[q].skeleton, 0, 70, true, 2.0);
+            var temp = new Rabbit(scene.rabbits[q], 2, q + "rabbit", scene, .1);
+        }   
+        
+    });
+
+}
+
+
+
+
 
 function DoClone(original, skeletons, id) {
 
@@ -900,7 +1116,6 @@ function modifySettings(scene) {
     scene.onPointerDown = function()
     {
         if(!scene.alreadyLocked) {
-            console.log("Requesting pointer lock");
             canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock ||
             canvas.webkitRequestPointerLock;
             canvas.requestPointerLock();
@@ -913,7 +1128,6 @@ function modifySettings(scene) {
                 var heroDude = scene.dudes[0];
                 heroDude.Dude.fireGun();
             }
-            console.log("not requesting because we ar ealready locked");
         }
        
     }
@@ -961,12 +1175,10 @@ document.addEventListener("keydown", function(event)
     if(event.key == 'b' || event.key == 'B')
     {
         isBPressed = true;
-        console.log("fired Cannon!");
     }
     if(event.key == 'r' || event.key == 'R')
     {
         isRPressed = true;
-        console.log("fired Laser hellooooo!");
     }
     if(event.key == 't' || event.key == 'T')
     {
@@ -1008,6 +1220,5 @@ document.addEventListener("keyup", function(event)
     if(event.key == 'r' || event.key == 'R')
     {
         isRPressed = false;
-        console.log("fired Laser!");
     }
 })
