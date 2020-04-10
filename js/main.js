@@ -37,6 +37,28 @@ class Dude {
     }
 }
 
+class Rabbit {
+    constructor(rabbitMesh) {
+        this.rabbitMesh = rabbitMesh;
+        rabbitMesh.Rabbit = this;
+        this.speed = 1;
+    }
+
+    move()
+    {
+        var tank = scene.getMeshByName("heroTank");
+        var direction = tank.position.subtract(this.rabbitMesh.position);
+        var distance = direction.length();
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.rabbitMesh.rotation.y = alpha + 3.15;
+        if(distance > 30) {
+            this.rabbitMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+    }
+}
+
+
 
 function startGame() {
     canvas = document.getElementById("renderCanvas");
@@ -47,12 +69,21 @@ function startGame() {
     var toRender = function () {
         tank.move();
         var heroDude = scene.getMeshByName("heroDude");
+        var heroRabbit = scene.getMeshByName("heroRabbit");
+        if(heroRabbit) {
+            heroRabbit.Rabbit.move();
+        }
         if(heroDude) {
             heroDude.Dude.move();
         }
         if(scene.dudes) {
             for(var q = 0; q< scene.dudes.length; q++) {
                 scene.dudes[q].Dude.move();
+            }
+        }
+        if(scene.rabbits) {
+            for(var q = 0; q< scene.rabbits.length; q++) {
+                scene.rabbits[q].Rabbit.move();
             }
         }
 
@@ -70,7 +101,7 @@ var createScene = function () {
     scene.activeCamera = followCamera;
     createLights(scene);
     createHeroDude(scene);
-
+    createHeroRabbit(scene);
 
     return scene;
 };
@@ -180,6 +211,29 @@ function createHeroDude(scene)
     }
 
 }
+
+function createHeroRabbit(scene)
+{
+    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,0,100);
+        meshes[0].name = "heroRabbit";
+        var heroRabbit = meshes[0];
+        heroRabbit.scaling = new BABYLON.Vector3(.1, .1, .1);
+        scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var rabbit = new Rabbit(heroRabbit);
+
+        scene.rabbits = [];
+        for (var q = 0; q < 5; q++) {
+            scene.rabbits[q] = DoClone(heroRabbit, skeletons, q);
+            scene.beginAnimation(scene.rabbits[q].skeleton, 0, 70, true, 2.0);
+            var temp = new Rabbit(scene.rabbits[q], 2);
+        }   
+        
+    });
+
+}
+
 
 function DoClone(original, skeletons, id) {
 
