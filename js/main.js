@@ -46,6 +46,13 @@ var createScene = function () {
         
     });
 
+    BABYLON.SceneLoader.ImportMesh("", "models/Low-Poly-Racing-Car/", "Low-Poly-Racing-Car.babylon", scene, function (meshes, particleSystems, skeletons) {          
+        meshes[0].position = new BABYLON.Vector3(0,4,50);
+        meshes[0].scaling = new BABYLON.Vector3(.08, .08, .08);
+        scene.beginAnimation(skeletons[0],0,70,true,2.0);
+        
+    });
+
 
     return scene;
 };
