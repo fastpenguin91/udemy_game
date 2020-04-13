@@ -251,6 +251,7 @@ class Rabbit {
         this.id = id;
         this.scene = scene;
         this.scaling = .1;
+        this.frontVector = new BABYLON.Vector3(0,0,-1);
         rabbitMesh.Rabbit = this;
         this.speed = 1;
         if(Rabbit.boundingBoxParameters == undefined)
@@ -282,11 +283,47 @@ class Rabbit {
         //console.log("moving rabbit!");
         if(scene.activeCamera != scene.followCameraRabbit)
         {
-            //console.log("rabbitMesh: ");
-            //console.log(this.rabbitMesh);
             this.rabbitMesh.animatableObject.pause();
             return;
         }
+        if(isWPressed || isSPressed)
+        {
+            this.rabbitMesh.animatableObject.restart();
+        }
+        else
+        {
+            this.rabbitMesh.animatableObject.pause();
+        }
+
+        this.rabbitMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Dude.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+
+        var direction = this.frontVector;
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.rabbitMesh.rotation.y = alpha;
+        if(isWPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+            //this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+        if(isSPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+            //this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+        }
+        if(isEPressed)
+        {
+            var alpha = this.rabbitMesh.rotation.y;
+            alpha+= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
+        if(isAPressed)
+        {
+            var alpha = this.rabbitMesh.rotation.y;
+            alpha -= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
+
+
     }
 
     createBoundingBox()
@@ -698,6 +735,7 @@ function createHeroRabbit(scene)
         heroRabbit.animatableObject = scene.beginAnimation(skeletons[0],0,70,true,2.0);
 
         var rabbit = new Rabbit(heroRabbit, 2, -1, scene, .2);
+        scene.followCameraRabbit = createFollowCamera(scene, heroRabbit);
 
         scene.rabbits = [];
         for (var q = 0; q < 5; q++) {
@@ -837,6 +875,8 @@ function toggleCamera(currentCam){
     if(currentCam == "heroDudeFollowCamera") {
         scene.activeCamera = scene.followCameraTank;
     } else if ( currentCam == "heroTankFollowCamera") {
+        scene.activeCamera = scene.followCameraRabbit;
+    } else if ( currentCam == "heroRabbitFollowCamera") {
         scene.activeCamera = scene.followCameraDude;
     }
 
