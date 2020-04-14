@@ -112,11 +112,13 @@ class Dude {
 
     }
 
-    createBoundingBox()
+     createBoundingBox()
     {
         var lengthX = Dude.boundingBoxParameters.lengthX;
         var lengthY = Dude.boundingBoxParameters.lengthY;
         var lengthZ = Dude.boundingBoxParameters.lengthZ;
+        // console.log("lengthY dude: ");
+        // console.log(lengthY);
 
         var bounder = new BABYLON.Mesh.CreateBox("bounder" + (this.id).toString(), 1, this.scene);
 
@@ -339,9 +341,8 @@ class Rabbit {
         var lengthZ = Rabbit.boundingBoxParameters.lengthZ;
 
         var bounder = new BABYLON.Mesh.CreateBox("bounder" + (this.id).toString(), 1, this.scene);
-
         bounder.scaling.x = lengthX * this.scaling;
-        bounder.scaling.y = lengthY * this.scaling;
+        bounder.scaling.y = lengthY * this.scaling + 10;
         bounder.scaling.z = lengthZ * this.scaling * 2;
 
         bounder.isVisible = true;
@@ -350,12 +351,13 @@ class Rabbit {
         bounderMaterial.alpha = .5;
         bounder.material = bounderMaterial;
         bounder.checkCollisions = true;
-
+        console.log("lengthY rabbit: ");
+        console.log(lengthY);
         bounder.position = new BABYLON.Vector3(this.rabbitMesh.position.x, this.rabbitMesh.position.y + this.scaling * lengthY/2, this.rabbitMesh.position.z);
-
+        console.log("bounder position rabbit:");
+        console.log(bounder.position);
 
         return bounder;
-
     }
 
     calculateBoundingBoxParameters()
@@ -405,7 +407,7 @@ class Rabbit {
 
 class Car {
     constructor(carMesh, speed, id, scene, scaling) {
-        console.log(carMesh.scaling);
+        //console.log(carMesh.scaling);
         this.carMesh = carMesh;
         this.id = id;
         this.scene = scene;
@@ -454,8 +456,15 @@ class Car {
             //this.rabbitMesh.animatableObject.pause();
         }
 
+        // working version
+        // this.carMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+        //     this.bounder.position.y - this.scaling * Car.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+
         this.carMesh.position = new BABYLON.Vector3(this.bounder.position.x,
-            this.bounder.position.y - this.scaling * Car.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+            (this.bounder.position.y + 4 )- this.scaling * Car.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+
+        console.log("car bounder position:");
+        console.log(this.bounder.position);
 
         var direction = this.frontVector;
         var dir = direction.normalize();
@@ -503,11 +512,14 @@ class Car {
         bounderMaterial.alpha = .5;
         bounder.material = bounderMaterial;
         bounder.checkCollisions = true;
-
-        bounder.position = new BABYLON.Vector3(this.carMesh.position.x, this.carMesh.position.y + this.scaling * lengthY/2, this.carMesh.position.z);
-
+        //console.log("carMesh.position.y: ");
+        //console.log(this.carMesh.position.y);
+        bounder.position = new BABYLON.Vector3(this.carMesh.position.x, 0 + this.scaling * lengthY/2, this.carMesh.position.z);
+        console.log("car bounder: ");
+        console.log(bounder.position);
 
         return bounder;
+        // carMesh.position.y = 4
 
     }
 
@@ -573,6 +585,7 @@ function startGame() {
         moveHeroCar();
         //moveOtherDudes();
         //moveOtherRabbits();
+        moveOtherCars();
 
         scene.render();
     }
@@ -921,7 +934,7 @@ function createHeroCar(scene)
 
         scene.cars = [];
         scene.cars[0] = heroCar;
-        for (var q = 1; q <= 5; q++) {
+        for (var q = 1; q <= 1; q++) {
             scene.cars[q] = DoClone(heroCar, skeletons, q, 4);
             var temp = new Car(scene.cars[q], 2, q, scene, .08);
         }
@@ -1015,6 +1028,17 @@ function moveOtherRabbits()
         }
     }
 }
+
+function moveOtherCars()
+{
+    if(scene.cars) {
+        for(var q = 1; q< scene.cars.length; q++) {
+            scene.cars[q].Car.followTank();
+            //console.log(scene.cars[q].Car.bounder.position);
+        }
+    }
+}
+
 
 
 window.addEventListener("resize", function () {
