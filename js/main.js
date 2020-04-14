@@ -24,7 +24,7 @@ class Dude {
 
         if (speed) {
             this.speed = speed;
-        } else { 
+        } else {
             this.speed = 0.75;
         }
         if (scaling) {
@@ -60,11 +60,12 @@ class Dude {
         this.dudeMesh.rotation.y = alpha;
         if(distance > 30)
             this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
-        
+
 
     }
 
     moveFPS() {
+
         var scene = this.scene;
         scene.activeCamera = scene.activeCameras[0];
         if(scene.activeCamera != scene.followCameraDude && scene.activeCamera != scene.freeCameraDude) {
@@ -123,7 +124,6 @@ class Dude {
             this.bounder.position.z = scene.freeCameraDude.position.z;//but I dont have the problem and adding these lines (comments) breaks the code. //- this.frontVector.z * 1.8;
 
         }
-
     }
 
     fireGun()
@@ -139,7 +139,7 @@ class Dude {
 
                 pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
             }
-            
+
             else if (pickInfo.pickedMesh.name.startsWith("clone")) {
                 pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
             }
@@ -147,7 +147,7 @@ class Dude {
 
 
     }
-    
+
 
     adjustYPosition() {
         var scene = this.scene;
@@ -310,7 +310,7 @@ class Dude {
         this.bounder.dispose();
         this.dudeMesh.dispose();
     }
-    
+
 }
 
 class Rabbit {
@@ -320,6 +320,7 @@ class Rabbit {
         this.scene = scene;
         this.health = 3;
         this.scaling = .1;
+        this.frontVector = new BABYLON.Vector3(0,0,-1);
         rabbitMesh.Rabbit = this;
         this.speed = 1;
         if(Rabbit.boundingBoxParameters == undefined)
@@ -331,7 +332,7 @@ class Rabbit {
         this.bounder.rabbitMesh = this.rabbitMesh;
     }
 
-    move()
+    followTank()
     {
         var scene = this.scene;
         if (!this.bounder) return;
@@ -347,6 +348,54 @@ class Rabbit {
             this.bounder.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
         }
     }
+
+    moveFPS() {
+        var scene = this.scene;
+        scene.activeCamera = scene.activeCameras[0];
+        if(scene.activeCamera != scene.followCameraRabbit)
+        {
+            this.rabbitMesh.animatableObject.pause();
+            return;
+        }
+        if(isWPressed || isSPressed)
+        {
+            this.rabbitMesh.animatableObject.restart();
+        }
+        else
+        {
+            this.rabbitMesh.animatableObject.pause();
+        }
+
+        this.rabbitMesh.position = new BABYLON.Vector3(this.bounder.position.x,
+            this.bounder.position.y - this.scaling * Rabbit.boundingBoxParameters.lengthY/2.0, this.bounder.position.z);
+
+        var direction = this.frontVector;
+        var dir = direction.normalize();
+        var alpha = Math.atan2(-1 * dir.x, -1 * dir.z);
+        this.rabbitMesh.rotation.y = alpha;
+        if(isWPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+            //this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+        }
+        if(isSPressed) {
+            this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(this.speed, this.speed, this.speed));
+            //this.bounder.moveWithCollisions(this.frontVector.multiplyByFloats(-1 * this.speed, -1 * this.speed, -1 * this.speed));
+        }
+        if(isEPressed)
+        {
+            var alpha = this.rabbitMesh.rotation.y;
+            alpha+= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
+        if(isAPressed)
+        {
+            var alpha = this.rabbitMesh.rotation.y;
+            alpha -= .1;
+            this.frontVector = new BABYLON.Vector3(-1 * Math.sin(alpha), 0, -1 * Math.cos(alpha));
+        }
+    }
+
+
 
     createBoundingBox()
     {
@@ -480,15 +529,16 @@ function startFirstScene()
         tank.fireCannonBalls(scene);
         tank.fireLaserBeams(scene);
         moveHeroDude(scene);
+        moveHeroRabbit(scene);
         moveOtherDudes(scene);
 
         var heroRabbit = scene.getMeshByName("heroRabbit");
         if(heroRabbit) {
-            heroRabbit.Rabbit.move();
+            //heroRabbit.Rabbit.move();
         }
         if(scene.rabbits) {
             for(var q = 0; q< scene.rabbits.length; q++) {
-                scene.rabbits[q].Rabbit.move();
+                //scene.rabbits[q].Rabbit.move();
             }
         }
 
@@ -610,7 +660,7 @@ function createPortal(scene, hero)
     ));
 
 
-    
+
 }
 
 function loadSounds(scene) {
@@ -695,7 +745,9 @@ function createFreeCamera(scene, initialPosition) {
 function createFollowCamera(scene, target) {
 
     var camera = new BABYLON.FollowCamera(target.name + "FollowCamera", target.position, scene, target);
-    if(target.name == "heroDude") {   
+    console.log("target position for camera");
+    console.log(target.position);
+    if(target.name == "heroDude") {
         camera.radius = 40; //how far from object to follow
         camera.heightOffset = 10; // how high above object to place camera
         camera.rotationOffset = 0; // viewing angle
@@ -705,7 +757,7 @@ function createFollowCamera(scene, target) {
         camera.heightOffset = 4; // how high above object to place camera
         camera.rotationOffset = 180; // viewing angle
     }
-    
+
     camera.cameraAcceleration = 0.1; // how fast to move
     camera.maxCameraSpeed = 5; // speed limit
     return camera;
@@ -791,10 +843,10 @@ function createTank(scene) {
             tank.rotation.y += .1;
             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y),0,Math.cos(tank.rotation.y));
         }
-        
+
     }
 
-    
+
     tank.fireCannonBalls = function(scene) {
         var tank = this;
         if(!isBPressed) return;
@@ -811,7 +863,7 @@ function createTank(scene) {
         cannonBall.material = new BABYLON.StandardMaterial("Fire", scene);
         cannonBall.material.diffuseTexture = new BABYLON.Texture("images/fire.jpg",scene);
 
-       
+
         var pos = tank.position;
 
         cannonBall.position = new BABYLON.Vector3(pos.x, pos.y +1, pos.z);
@@ -819,13 +871,13 @@ function createTank(scene) {
 
         cannonBall.physicsImpostor = new BABYLON.PhysicsImpostor(cannonBall,
             BABYLON.PhysicsImpostor.SphereImpostor, {mass : 1}, scene);
-            
+
         var fVector = tank.frontVector;
         var force = new BABYLON.Vector3(fVector.x * 100, (fVector.y+.1) * 100, fVector.z * 100);
         cannonBall.physicsImpostor.applyImpulse(force, cannonBall.getAbsolutePosition());
-        
+
         cannonBall.actionManager = new BABYLON.ActionManager(scene);
-        
+
         scene.dudes.forEach(function(dude){
             cannonBall.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
                 {
@@ -833,7 +885,7 @@ function createTank(scene) {
                     parameter: dude.Dude.bounder
                 },
                 function () {
-                    
+
                     if(dude.Dude.bounder._isDisposed) return;
                     dude.Dude.gotKilled();
                 }
@@ -850,7 +902,7 @@ function createTank(scene) {
                     parameter: rabbit.Rabbit.bounder
                 },
                 function () {
-                    
+
                     if(rabbit.Rabbit.bounder._isDisposed) return;
                     rabbit.Rabbit.gotKilled();
                 }
@@ -861,7 +913,7 @@ function createTank(scene) {
 
 
 
-        
+
         setTimeout(function() {
             cannonBall.dispose();
         },3000);
@@ -882,7 +934,7 @@ function createTank(scene) {
         scene.assets["laserSound"].play();
         var origin = tank.position;
         var direction = new BABYLON.Vector3(tank.frontVector.x, tank.frontVector.y + .1, tank.frontVector.z);
-        
+
         var ray = new BABYLON.Ray(origin, direction,1000);
         var rayHelper = new BABYLON.RayHelper(ray);
         rayHelper.show(scene, new BABYLON.Color3.Red);
@@ -916,15 +968,10 @@ function createTank(scene) {
                 }
 
                 if(pickInfo.pickedMesh.name.startsWith("bounder")) {
-                    //console.log("hit lala!");
-                    //console.log(pickInfo.pickedMesh.name);
-                    //console.log(pickInfo.pickedMesh.name.includes("rabbit"));
                     //pickInfo.pickedMesh.dudeMesh.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
-                
+
                 else if (pickInfo.pickedMesh.name.startsWith("clone")) {
-                    //console.log("something ELSE hit!");
-                    //console.log(pickInfo.pickedMesh.name);
                     //pickInfo.pickedMesh.parent.Dude.decreaseHealth(pickInfo.pickedPoint);
                 }
             }
@@ -940,19 +987,19 @@ function createHeroDude(scene)
     var meshTask = scene.assetsManager.addMeshTask("DudeTask", "him", "models/Dude/", "Dude.babylon");
 
     meshTask.onSuccess = function (task) {
-        
+
         onDudeImported(task.loadedMeshes, task.loadedParticleSystems, task.loadedSkeletons);
         function onDudeImported(newMeshes, particleSystems, skeletons) {
             newMeshes[0].position = new BABYLON.Vector3(0,0,5); // the original dude
             newMeshes[0].name = "heroDude";
             var heroDude = newMeshes[0];
-    
+
             for (var i = 1; i < heroDude.getChildren().length; i++)
             {
                 heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
                 console.log("child here");
             }
-            
+
             heroDude.animatableObject = scene.beginAnimation(skeletons[0],0,120,true,1.0);
             var hero = new Dude(heroDude, 2, -1, scene,.2);
             scene.followCameraDude = createFollowCamera(scene, heroDude);
@@ -964,7 +1011,7 @@ function createHeroDude(scene)
                 heroDude.position.z);
             scene.freeCameraDude = createFreeCamera(scene,freeCamPosition);
             scene.freeCameraDude.viewport = new BABYLON.Viewport(0, 0, .5, 1);
-            
+
             loadCrosshair(scene);
             scene.dudes = [];
             scene.dudes[0] = heroDude;
@@ -972,7 +1019,7 @@ function createHeroDude(scene)
                 scene.dudes[q] = DoClone(heroDude, skeletons, q);
                 scene.beginAnimation(scene.dudes[q].skeleton, 0, 120, true, 1.0);
                 var temp = new Dude(scene.dudes[q], Math.random().toFixed(2), q + "dude", scene, .2);
-    
+
             }
 
             scene.arcRotateCamera = createArcRotateCamera(scene, scene.dudes[1]);
@@ -985,7 +1032,7 @@ function createHeroDude(scene)
             {
                 heroDude.getChildren()[i].layerMask = 2;
             }
-            
+
         }
 
 
@@ -1000,7 +1047,7 @@ function createHeroDude(scene)
         {
             heroDude.getChildren()[i].name = "clone_".concat(heroDude.getChildren()[i].name);
         }
-        
+
         scene.beginAnimation(skeletons[0],0,120,true,1.0);
         var hero = new Dude(heroDude, 2, -1, scene,.2);
 
@@ -1013,29 +1060,33 @@ function createHeroDude(scene)
 
         }
     }
-    
-    
+
+
 
 }
 
 function createHeroRabbit(scene)
 {
-    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {          
+    BABYLON.SceneLoader.ImportMesh("", "models/Rabbit/", "Rabbit.babylon", scene, function (meshes, particleSystems, skeletons) {
         meshes[0].position = new BABYLON.Vector3(0,0,100);
         meshes[0].name = "heroRabbit";
         var heroRabbit = meshes[0];
         heroRabbit.scaling = new BABYLON.Vector3(.1, .1, .1);
-        scene.beginAnimation(skeletons[0],0,70,true,2.0);
 
-        var rabbit = new Rabbit(heroRabbit, 2, -1, scene, .2);
+        heroRabbit.animatableObject = scene.beginAnimation(skeletons[0],0,70,true,2.0);
+
+        var rabbit = new Rabbit(heroRabbit, 2, -1, scene, .1);
+        scene.followCameraRabbit = createFollowCamera(scene, heroRabbit);
+        scene.followCameraRabbit.viewport = new BABYLON.Viewport( 0, 0, .5, 1);
 
         scene.rabbits = [];
-        for (var q = 0; q < 5; q++) {
+        scene.rabbits[0] = heroRabbit;
+        for (var q = 1; q <= 5; q++) {
             scene.rabbits[q] = DoClone(heroRabbit, skeletons, q);
             scene.beginAnimation(scene.rabbits[q].skeleton, 0, 70, true, 2.0);
             var temp = new Rabbit(scene.rabbits[q], 2, q + "rabbit", scene, .1);
-        }   
-        
+        }
+
     });
 
 }
@@ -1057,7 +1108,7 @@ function DoClone(original, skeletons, id) {
     if (!skeletons) {
         return myClone;
     } else {
-    
+
         if(!original.getChildren()) {
             myClone.skeleton = skeletons[0].clone("clone_" + id + "_skeleton");
             return myClone;
@@ -1094,6 +1145,13 @@ function moveHeroDude(scene) {
     }
 }
 
+function moveHeroRabbit(scene) {
+    var heroRabbit = scene.getMeshByName("heroRabbit");
+    if (heroRabbit) {
+        heroRabbit.Rabbit.moveFPS();
+    }
+}
+
 function moveOtherDudes(scene)
 {
     if(scene.dudes) {
@@ -1119,7 +1177,7 @@ function modifySettings(scene) {
             canvas.requestPointerLock = canvas.requestPointerLock || canvas.msRequestPointerLock || canvas.mozRequestPointerLock ||
             canvas.webkitRequestPointerLock;
             canvas.requestPointerLock();
-            
+
             //canvas.requestPointerLock(); // allows aiming via pointer
         } else {
             scene.activeCamera = scene.activeCameras[0];
@@ -1129,7 +1187,7 @@ function modifySettings(scene) {
                 heroDude.Dude.fireGun();
             }
         }
-       
+
     }
 
     document.addEventListener("pointerlockchange", pointerLockListener);
@@ -1150,6 +1208,19 @@ function modifySettings(scene) {
 
     }
 
+}
+
+function toggleCamera(currentCam){
+    var scene = Game.scenes[Game.activeScene];
+    console.log(currentCam);
+    if(currentCam == "heroDudeFollowCamera"){
+        scene.activeCameras[0] = scene.followCameraTank;
+    } else if (currentCam == "heroTankFollowCamera") {
+        scene.activeCameras[0] = scene.followCameraRabbit;
+    } else if (currentCam == "heroRabbitFollowCamera") {
+        scene.activeCameras[0] = scene.followCameraDude;
+    }
+    //scene.activeCameras[0] = scene.followCameraTank;
 }
 
 
@@ -1191,6 +1262,12 @@ document.addEventListener("keydown", function(event)
     if(event.key == 'u' || event.key == 'U')
     {
         scene.activeCameras[0] = scene.freeCameraDude;
+    }
+    if(event.key == 'p' || event.key == 'P')
+    {
+        console.log("P or p pressed");
+        toggleCamera(scene.activeCameras[0].name);
+
     }
 });
 
